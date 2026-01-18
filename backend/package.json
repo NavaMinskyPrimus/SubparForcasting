@@ -6,7 +6,7 @@
     "scripts": {
         "test": "jest",
         "start": "node server.js",
-        "dev": "ts-node-dev --respawn src/server.ts",
+        "dev": "ts-node-dev --respawn server.ts",
         "build": "tsc"
     },
     "dependencies": {
