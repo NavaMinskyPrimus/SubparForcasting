@@ -1,12 +1,27 @@
 import express, { Request, Response } from "express"
 import dotenv from "dotenv";
+import { pool } from './pool';
+
 dotenv.config();
 const port =  Number(process.env.PORT);
-const app=express()
+export const app=express()
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'OK' });
 });
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+
+app.get("/api/health/db", async (_req, res) => {
+  try {
+    const r = await pool.query("SELECT 1 AS ok");
+    res.status(200).json({ status: "OK", db: r.rows[0] });
+  } catch (err: any) {
+    res.status(500).json({ status: "ERROR", error: err?.message ?? "DB error" });
+  }
 });
+
+if (require.main === module) {
+  const port = Number(process.env.PORT ?? 3001);
+  app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+  });
+}
