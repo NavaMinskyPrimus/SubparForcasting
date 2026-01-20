@@ -13,4 +13,11 @@ export const {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
+
+  callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Always send users to /instructions after a successful sign-in
+      return `${baseUrl}/instructions`;
+    },
+  },
 });

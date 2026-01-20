@@ -1,0 +1,180 @@
+/* app/instructions/Instructions.module.css */
+
+.shell {
+  min-height: 100vh;
+  background: #f7f7f8;
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 1040px;
+  padding: 32px 20px 72px;
+}
+
+.main {
+  display: block;
+}
+
+.header {
+  margin-bottom: 28px;
+}
+
+.h1 {
+  font-size: 40px;
+  line-height: 1.1;
+  margin: 0 0 10px;
+}
+
+.lede {
+  font-size: 18px;
+  line-height: 1.6;
+  margin: 0 0 10px;
+  max-width: 74ch;
+}
+
+.meta {
+  margin: 0;
+  max-width: 74ch;
+  color: #444;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.toc {
+  position: sticky;
+  top: 18px;
+  padding: 16px;
+  border: 1px solid #e5e5e5;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.tocTitle {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.tocList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.tocLink {
+  color: #0b57d0;
+  text-decoration: none;
+}
+
+.tocLink:hover {
+  text-decoration: underline;
+}
+
+.article {
+  padding: 18px 18px 28px;
+  border: 1px solid #e5e5e5;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.section {
+  padding: 8px 0 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.section:last-of-type {
+  border-bottom: none;
+}
+
+.h2 {
+  font-size: 24px;
+  margin: 6px 0 10px;
+}
+
+.h3 {
+  font-size: 18px;
+  margin: 16px 0 8px;
+}
+
+.list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+}
+
+.callout {
+  margin: 14px 0;
+  padding: 14px 14px 12px;
+  border-radius: 12px;
+  border: 1px solid #e7e7e7;
+  background: #fafafa;
+}
+
+.calloutTitle {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.calloutBody {
+  color: #222;
+}
+
+.exampleBlock {
+  margin: 14px 0;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #e7e7e7;
+  background: #fcfcfc;
+}
+
+.exampleTitle {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.exampleText {
+  margin: 8px 0;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  margin: 10px 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table th,
+.table td {
+  border-bottom: 1px solid #eee;
+  padding: 10px 8px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.footerNote {
+  margin-top: 18px;
+  color: #444;
+}
+
+@media (max-width: 900px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .toc {
+    position: static;
+  }
+}
