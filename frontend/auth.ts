@@ -1,3 +1,4 @@
+// auth.ts
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 
@@ -14,10 +15,17 @@ export const {
     }),
   ],
 
-  callbacks: {
-    async redirect({ url, baseUrl }) {
-      // Always send users to /instructions after a successful sign-in
-      return `${baseUrl}/instructions`;
+  events: {
+    async signIn({ user }) {
+      // user.email is available here
+      await fetch(`${process.env.BACKEND_URL}/users`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: user.email,
+          name: user.name,
+        }),
+      });
     },
   },
 });

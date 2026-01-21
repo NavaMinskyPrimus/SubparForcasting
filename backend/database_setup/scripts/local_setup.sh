@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+echo "cleanup"
+docker rm -f localdb >/dev/null 2>&1 || true
+
 echo "Starting local environment..."
 #get 
 DIRNAME="$(dirname "${BASH_SOURCE[0]}")"

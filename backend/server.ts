@@ -6,9 +6,9 @@ dotenv.config();
 const port =  Number(process.env.PORT);
 export const app=express()
 import userRoutes from './api/src/routes/users';
+app.use(express.json());
 
 app.use("/api/users", userRoutes);
-
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'OK' });

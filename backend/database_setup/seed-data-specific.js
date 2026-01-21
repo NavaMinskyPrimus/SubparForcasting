@@ -1,18 +1,25 @@
 require('dotenv').config();
+const { permission } = require('process');
 const { seedDatabase } = require('./seed-database');
 
 const users = [
     {
-        user_id: 1,
+        userid: 1,
         name: 'Celine',
+        email: "celine@place.org",
+        permission: "user"
     },
     {
-        user_id: 2,
-        name: 'Nava'
+        userid: 2,
+        name: 'Nava',
+        email: 'Navaminskyprimus@gmail.com',
+        permission: "admin"
     },
     {
-        user_id: 3,
-        name: 'Aba'
+        userid: 3,
+        name: 'Aba',
+        email: 'email@email.com',
+        permission: "user"
     },
 ];
 
@@ -29,17 +36,17 @@ const questions = [
 
 const answers = [
     {
-        user_id: 1,
+        userid: 1,
         question_id: 1,
         probability: 10 
     },
     {
-        user_id: 1,
+        userid: 1,
         question_id: 2,
         probability: 99 
     },
     {
-        user_id: 2,
+        userid: 2,
         question_id: 1,
         probability: 5 
     },
