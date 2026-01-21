@@ -1,4 +1,5 @@
 import { deleteUserByID, getUsers, postUser} from '../../../database/user-queries';
+import {deleteAnsewersByUID} from '../../../database/answer-queries';
 import type { Request, Response } from "express";
 
 export async function handleGetUsers(req: Request, res: Response) {
@@ -30,6 +31,7 @@ export async function handlePostUser(req: Request, res: Response) {
 export async function handleDeleteUser(req: Request, res: Response) {
     try{
         const id = req.body.userid;
+        const questions = await deleteAnsewersByUID(id)
         const removed = await deleteUserByID(id);
         res.status(201).json(removed);
     }catch(err){

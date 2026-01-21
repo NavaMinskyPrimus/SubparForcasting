@@ -10,16 +10,16 @@ CREATE TABLE users (
 );
 
 CREATE TABLE questions (
-  "question_id" INTEGER PRIMARY KEY DEFAULT nextval('"Question_Id_seq"'),
+  "questionid" INTEGER PRIMARY KEY DEFAULT nextval('"Question_Id_seq"'),
   "question" TEXT
 );
 
 CREATE TABLE answers (
     "userid" INTEGER NOT NULL,
-    "question_id" INTEGER NOT NULL,
+    "questionid" INTEGER NOT NULL,
     "probability" INTEGER,
-    PRIMARY KEY ("userid", "question_id"),
+    PRIMARY KEY ("userid", "questionid"),
     FOREIGN KEY ("userid") REFERENCES "users"("userid"),
-    FOREIGN KEY ("question_id") REFERENCES "questions"("question_id"),
+    FOREIGN KEY ("questionid") REFERENCES "questions"("questionid"),
     CONSTRAINT probability_range CHECK (probability >= 0 AND probability <= 100)
 )

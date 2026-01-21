@@ -25,11 +25,11 @@ const users = [
 
 const questions = [
     {
-        question_id: 1,
+        questionid: 1,
         question: 'What are the chances i EAT YOU',
     },
     {
-        question_id: 2,
+        questionid: 2,
         question: 'Will my dog eat food tomorow',
     },
 ];
@@ -37,17 +37,17 @@ const questions = [
 const answers = [
     {
         userid: 1,
-        question_id: 1,
+        questionid: 1,
         probability: 10 
     },
     {
         userid: 1,
-        question_id: 2,
+        questionid: 2,
         probability: 99 
     },
     {
         userid: 2,
-        question_id: 1,
+        questionid: 1,
         probability: 5 
     },
 ];
