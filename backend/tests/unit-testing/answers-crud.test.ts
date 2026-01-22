@@ -48,7 +48,7 @@ describe('Database CRUD tests for user queries', () => {
     describe('deleteAnsewersByUID tests', () => {
         let uid: number;
         it('should post a new user', async () => {
-            const user1 = await postUser("Test User", "test@user.com", "admin");
+            const user1 = await postUser("Test User", "test@user.com", "admin", "testsub");
             uid = user1.userid;
             const user2 = await getUserByID(uid);
             expect(user2.userid).toBe(uid);           // or user.user_id

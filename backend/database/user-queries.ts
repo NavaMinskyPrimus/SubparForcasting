@@ -13,15 +13,16 @@ export async function getUserByID(userid: number) {
 export async function postUser(
   name: string,
   email: string,
-  permission: 'admin' | 'user'
+  permission: 'admin' | 'user',
+  sub: string
 ) {
   const query = `
-    INSERT INTO public."users" (userid, name, email, permission)
-    VALUES ((SELECT COALESCE(MAX("userid"), 0) + 1 FROM public."users"), $1, $2, $3)
+    INSERT INTO public."users" (userid, name, email, permission,sub)
+    VALUES ((SELECT COALESCE(MAX("userid"), 0) + 1 FROM public."users"), $1, $2, $3, $4)
     RETURNING *;
   `;
   
-  const values = [name, email, permission];
+  const values = [name, email, permission, sub];
   const res = await pool.query(query, values)
   
   return res.rows[0];

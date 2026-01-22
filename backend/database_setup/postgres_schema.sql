@@ -6,7 +6,8 @@ CREATE TABLE users (
   "userid" INTEGER PRIMARY KEY DEFAULT nextval('"Users_UserID_seq"'),
   "name" VARCHAR(200) NOT NULL,
   "email" VARCHAR(200) NOT NULL,
-  "permission" user_permission NOT NULL DEFAULT 'user'
+  "permission" user_permission NOT NULL DEFAULT 'user',
+  "sub" VARCHAR(200) NOT NULL
 );
 
 CREATE TABLE questions (

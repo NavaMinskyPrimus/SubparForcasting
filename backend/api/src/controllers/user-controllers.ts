@@ -21,7 +21,8 @@ export async function handlePostUser(req: Request, res: Response) {
         const name = req.body?.name;
         const email = req.body?.email;
         const permission = req.body?.permission;
-        const newUser = await postUser(name, email, permission);
+        const sub = req.body?.sub;
+        const newUser = await postUser(name, email, permission,sub);
         res.status(201).json(newUser);
     }catch(err){
          console.error("Failed to post user", err);

@@ -13,7 +13,7 @@ describe('Database CRUD tests for user queries', () => {
         expect(users.length).toBe(3);
     });
     it('should post a user', async () => {
-        const inserted = await postUser("Test User","test@user.org", "user");
+        const inserted = await postUser("Test User","test@user.org", "user", "testsub");
         id = inserted.userid
         console.log(inserted);
         expect(typeof id).toBe('number');

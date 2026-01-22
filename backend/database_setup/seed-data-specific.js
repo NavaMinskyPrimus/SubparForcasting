@@ -7,19 +7,22 @@ const users = [
         userid: 1,
         name: 'Celine',
         email: "celine@place.org",
-        permission: "user"
+        permission: "user",
+        sub: "sub1"
     },
     {
         userid: 2,
         name: 'Nava',
-        email: 'Navaminskyprimus@gmail.com',
-        permission: "admin"
+        email: 'navaminskyprimus@gmail.com',
+        permission: "admin",
+        sub: "sub2"
     },
     {
         userid: 3,
         name: 'Aba',
         email: 'email@email.com',
-        permission: "user"
+        permission: "user",
+        sub: "sub3"
     },
 ];
 
