@@ -21,8 +21,15 @@ const TEST_USER = {
 
 export async function requireGoogleAuth(req: Request, res: Response, next: NextFunction) {
   if (process.env.AUTH_BYPASS === "true" || process.env.NODE_ENV === "test") {
-    req.auth = { email: TEST_USER.email, sub: TEST_USER.sub };
-    return next();
+      const email = req.header("x-test-email");
+    const sub = req.header("x-test-sub");
+    if (email && sub) {
+      req.auth = { email, sub };
+      return next();
+    }else{
+      req.auth = { email: TEST_USER.email, sub: TEST_USER.sub };
+      return next();
+    }
   }
 
   try {

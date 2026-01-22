@@ -49,7 +49,7 @@ export async function handleDeleteUser(req: Request, res: Response) {
         }
         const questions = await deleteAnswersByUID(id)
         const removed = await deleteUserByID(id);
-        res.status(201).json(removed);
+        res.status(204).json(removed);
 
     }catch(err){
         console.error("Failed to delete user", err);

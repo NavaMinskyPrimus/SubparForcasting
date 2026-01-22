@@ -21,13 +21,21 @@ describe('Users API Integration Tests', () => {
             expect(response.body.name).toBe("Test User");
             id = response.body.userid
         });
-        it('should remove a user', async () => {
+        it('should fail to remove a user', async () => {
             const response = await request(app)
                 .delete('/api/users')
                 .send({userid: id})
-                .expect(201);
+                .expect(403);
         });
-    });
+        it('should actually remove a user', async () => {
+            const response = await request(app)
+                .delete('/api/users')
+                .set("x-test-email", "test@user.org")
+                .set("x-test-sub", "testsub")
+                .send({ userid: id })
+                .expect(204);
+            });
+        });
 });
 
 afterAll(async () => {
