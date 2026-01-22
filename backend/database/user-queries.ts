@@ -10,6 +10,11 @@ export async function getUserByID(userid: number) {
   return res.rows[0] || null;
 }
 
+export async function getUserBySub(sub: string) {
+  const res = await pool.query('SELECT * FROM public."users" WHERE sub = $1;', [sub]);
+  return res.rows[0] || null;
+}
+
 export async function postUser(
   name: string,
   email: string,

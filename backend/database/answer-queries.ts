@@ -1,7 +1,7 @@
 
 import { pool } from './pool';
 
-export async function deleteAnsewersByUID(userid: number){
+export async function deleteAnswersByUID(userid: number){
   const query = `DELETE from public."answers" WHERE userid = $1 RETURNING *`;
   const value = [userid]
   const res = await pool.query(query, value);
