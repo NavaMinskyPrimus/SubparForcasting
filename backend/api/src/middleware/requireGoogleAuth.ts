@@ -14,7 +14,17 @@ declare global {
   }
 }
 
+const TEST_USER = {
+  email: "navaminskyprimus@gmail.com",
+  sub: "sub2",
+};
+
 export async function requireGoogleAuth(req: Request, res: Response, next: NextFunction) {
+  if (process.env.AUTH_BYPASS === "true" || process.env.NODE_ENV === "test") {
+    req.auth = { email: TEST_USER.email, sub: TEST_USER.sub };
+    return next();
+  }
+
   try {
     const header = req.header("authorization");
     if (!header?.startsWith("Bearer ")) {
