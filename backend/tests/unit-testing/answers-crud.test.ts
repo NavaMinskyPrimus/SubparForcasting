@@ -1,6 +1,6 @@
 require('dotenv').config();
 import { pool } from './../../database/pool';
-import { deleteAnsewersByUID, deleteAnswer, getAnswersByUID, postAnswer} from '../../database/answer-queries';
+import { deleteAnswersByUID, deleteAnswer, getAnswersByUID, postAnswer} from '../../database/answer-queries';
 import { describe } from 'node:test';
 import { deleteUserByID, getUserByID, postUser } from '../../database/user-queries';
 
@@ -45,7 +45,7 @@ describe('Database CRUD tests for user queries', () => {
             expect(questionids).not.toContain(2);
         });
     });
-    describe('deleteAnsewersByUID tests', () => {
+    describe('deleteAnswersByUID tests', () => {
         let uid: number;
         it('should post a new user', async () => {
             const user1 = await postUser("Test User", "test@user.com", "admin", "testsub");
@@ -65,7 +65,7 @@ describe('Database CRUD tests for user queries', () => {
             expect(probs).toContain(70);
         });
         it('should remove all answers by user', async () => {
-            const removed = await deleteAnsewersByUID(uid);
+            const removed = await deleteAnswersByUID(uid);
             expect(Array.isArray(removed)).toBe(true);
             const removed_qids =  removed.map((answer: any) => answer.probability);
             expect(removed_qids).toContain(10);
