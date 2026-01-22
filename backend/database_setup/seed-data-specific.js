@@ -21,7 +21,7 @@ const users = [
         userid: 3,
         name: 'Aba',
         email: 'email@email.com',
-        permission: "user",
+        permission: "admin",
         sub: "sub3"
     },
 ];
