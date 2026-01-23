@@ -27,6 +27,7 @@ DROP TABLE IF EXISTS "questions" CASCADE;
 DROP TABLE IF EXISTS "answers" CASCADE;
 DROP SEQUENCE IF EXISTS "Users_UserID_seq" CASCADE;
 DROP SEQUENCE IF EXISTS "Question_Id_seq" CASCADE;
+DROP TYPE IF EXISTS user_permission CASCADE;
 EOF
 
 docker exec -i localdb psql -U localuser -d localdb < "$LOCAL_SETUP_DIR/postgres_schema.sql"
