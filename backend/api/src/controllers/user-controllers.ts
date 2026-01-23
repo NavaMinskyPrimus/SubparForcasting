@@ -21,6 +21,8 @@ export async function handlePostUser(req: Request, res: Response) {
         const email = req.body?.email;
         const permission = req.body?.permission;
         const sub = req.body?.sub;
+        // add checks on these; they must exist, you shouldn't be able to post anyone but yourself if you aren't an admin
+        // 
         const newUser = await postUser(name, email, permission,sub);
         res.status(201).json(newUser);
     }catch(err){

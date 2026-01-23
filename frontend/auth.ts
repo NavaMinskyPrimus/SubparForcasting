@@ -24,6 +24,7 @@ export const {
         body: JSON.stringify({
           email: user.email,
           name: user.name,
+          sub: user.sub
         }),
       });
     },
