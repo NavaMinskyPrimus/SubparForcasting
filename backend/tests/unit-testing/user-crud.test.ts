@@ -1,6 +1,6 @@
 require('dotenv').config();
 import { pool } from './../../database/pool';
-import { deleteUserByID, getUserByID, getUsers, postUser} from '../../database/user-queries';
+import {deleteUserWithAssociatedAnswers, getUserByID, getUsers, postUser} from '../../database/user-queries';
 
 afterAll(async () => {
   await pool.end();
@@ -23,7 +23,7 @@ describe('Database CRUD tests for user queries', () => {
         expect(user.permission).toBe('user');
     });
     it('should remove a user', async () => {
-        const user = await deleteUserByID(id);
+        const user = await deleteUserWithAssociatedAnswers(id);
         expect(user.userid).toBe(id);
         expect(user.email).toBe('test@user.org');
         expect(user.permission).toBe('user');

@@ -1,5 +1,6 @@
 
 import { pool } from './pool';
+import type { PoolClient } from "pg";
 
 export async function deleteAnswersByUID(userid: number){
   const query = `DELETE from public."answers" WHERE userid = $1 RETURNING *`;
@@ -7,11 +8,12 @@ export async function deleteAnswersByUID(userid: number){
   const res = await pool.query(query, value);
   return res.rows;
 }
+
 export async function deleteAnswer(userid: number,questionid: number){
   const query = `DELETE from public."answers" WHERE userid = $1 AND questionid = $2 RETURNING *`;
   const value = [userid,questionid]
   const res = await pool.query(query, value);
-  return res.rows[0];
+  return res.rows[0] ?? null;
 }
 export async function postAnswer(userid: number, questionid: number, probability: number){
     const query = `
@@ -43,5 +45,5 @@ export async function putAnswer(userid: number, questionid: number, probability:
 
 export async function checkAnswer(userid: number, questionid: number){
   const res = await pool.query('SELECT * FROM public."answers" WHERE userid = $1 AND questionid = $2;', [userid, questionid]);
-  return res.rows[0] || null;
+  return res.rows[0] ?? null;
 }

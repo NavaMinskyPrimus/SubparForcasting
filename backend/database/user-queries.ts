@@ -1,4 +1,5 @@
 import { pool } from './pool';
+import type { PoolClient } from "pg";
 
 export async function getUsers() {
   const res = await pool.query('SELECT * FROM public."users";');
@@ -7,12 +8,14 @@ export async function getUsers() {
 
 export async function getUserByID(userid: number) {
   const res = await pool.query('SELECT * FROM public."users" WHERE userid = $1;', [userid]);
-  return res.rows[0] || null;
+  return res.rows[0] ?? null;
 }
+
+
 
 export async function getUserBySub(sub: string) {
   const res = await pool.query('SELECT * FROM public."users" WHERE sub = $1;', [sub]);
-  return res.rows[0] || null;
+  return res.rows[0] ?? null;
 }
 
 export async function postUser(
@@ -33,9 +36,25 @@ export async function postUser(
   return res.rows[0];
 }
 
-export async function deleteUserByID(userid: number){
-  const query = `DELETE from public."users" WHERE userid = $1 RETURNING *`;
-  const value = [userid]
-  const res = await pool.query(query, value);
-  return res.rows[0];
+export async function deleteUserWithAssociatedAnswers(userid: number) {
+  const client: PoolClient = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+    await client.query(
+      `DELETE FROM public."answers" WHERE userid = $1`,
+      [userid]
+    );
+    const user = await client.query(
+      `DELETE FROM public."users" WHERE userid = $1 RETURNING *`,
+      [userid]
+    );
+    await client.query("COMMIT");
+    return user.rows[0] ?? null;
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
 }

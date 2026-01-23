@@ -33,7 +33,7 @@ describe('Users API Integration Tests', () => {
                 .set("x-test-email", "test@user.org")
                 .set("x-test-sub", "testsub")
                 .send({ userid: id })
-                .expect(204);
+                .expect(200);
             });
         });
         it('should add a user', async () => {
@@ -50,7 +50,7 @@ describe('Users API Integration Tests', () => {
                 .set("x-test-email", "email@email.com")
                 .set("x-test-sub", "sub3")
                 .send({ userid: id })
-                .expect(204);
+                .expect(200);
         });
 });
 

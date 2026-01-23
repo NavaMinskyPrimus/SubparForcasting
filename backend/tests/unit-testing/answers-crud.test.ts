@@ -2,7 +2,7 @@ require('dotenv').config();
 import { pool } from './../../database/pool';
 import { deleteAnswersByUID, deleteAnswer, getAnswersByUID, postAnswer} from '../../database/answer-queries';
 import { describe } from 'node:test';
-import { deleteUserByID, getUserByID, postUser } from '../../database/user-queries';
+import { deleteUserWithAssociatedAnswers, getUserByID, postUser } from '../../database/user-queries';
 
 afterAll(async () => {
   await pool.end();
@@ -64,19 +64,12 @@ describe('Database CRUD tests for user queries', () => {
             expect(probs).toContain(10);
             expect(probs).toContain(70);
         });
-        it('should remove all answers by user', async () => {
-            const removed = await deleteAnswersByUID(uid);
-            expect(Array.isArray(removed)).toBe(true);
-            const removed_qids =  removed.map((answer: any) => answer.probability);
-            expect(removed_qids).toContain(10);
-            expect(removed_qids).toContain(70);
-            const remaining = await getAnswersByUID(uid);
-            expect(remaining.length).toBe(0);
-        });
-        it('should remove added user', async () => {
-            const removed = await deleteUserByID(uid);
+        it('should remove added user with answers', async () => {
+            const removed = await deleteUserWithAssociatedAnswers(uid);
             const user = await getUserByID(uid);
             expect(user).toBe(null)
+            const remaining  = await getAnswersByUID(uid);
+            expect(remaining.length).toBe(0);
         });
     });
 });

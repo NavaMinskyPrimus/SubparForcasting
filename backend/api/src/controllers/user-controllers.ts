@@ -1,4 +1,4 @@
-import { deleteUserByID, getUserByID, getUserBySub, getUsers, postUser} from '../../../database/user-queries';
+import { deleteUserWithAssociatedAnswers, getUserByID, getUserBySub, getUsers, postUser} from '../../../database/user-queries';
 import {deleteAnswersByUID} from '../../../database/answer-queries';
 import type { Request, Response } from "express";
 
@@ -15,8 +15,7 @@ export async function handleGetUsers(req: Request, res: Response) {
 export async function handlePostUser(req: Request, res: Response) {
     try{
         if (!req.body ){
-            res.status(400).json({err: "body is undefined"});
-            return
+            return res.status(400).json({err: "body is undefined"});
         }
         const name = req.body?.name;
         const email = req.body?.email;
@@ -31,28 +30,34 @@ export async function handlePostUser(req: Request, res: Response) {
 }
 export async function handleDeleteUser(req: Request, res: Response) {
     try{
+        if (!req.body ){
+            res.status(400).json({err: "body is undefined"});
+            return
+        }
         const id : number = req.body.userid;
         if (!req.auth?.sub) {
             return res.status(401).json({ error: 'Authentication required' });
         }
         const sub = req.auth.sub;
-        const existingUser = await getUserByID(id);
         const currentUser = await getUserBySub(sub);
         if(!currentUser){
             return res.status(404).json({ error: 'current user not found' });
         }
+        const existingUser = await getUserByID(id);
         if(!existingUser){
             return res.status(404).json({ error: 'User not found' });
         }
         if((existingUser.userid != currentUser.userid) && (currentUser.permission != "admin")){
             return res.status(403).json({ error: 'Only admins can delete other users' });
         }
-        const questions = await deleteAnswersByUID(id)
-        const removed = await deleteUserByID(id);
-        res.status(204).json(removed);
+        const removed = await deleteUserWithAssociatedAnswers(id);
+        if(removed == null){
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.status(200).json(removed);
 
     }catch(err){
         console.error("Failed to delete user", err);
-        res.status(500).json({ err: "Failed to post user" });
+        res.status(500).json({ err: "Failed to delete user" });
     }
 }
