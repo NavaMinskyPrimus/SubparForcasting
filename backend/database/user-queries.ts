@@ -25,8 +25,8 @@ export async function postUser(
   sub: string
 ) {
   const query = `
-    INSERT INTO public."users" (userid, name, email, permission,sub)
-    VALUES ((SELECT COALESCE(MAX("userid"), 0) + 1 FROM public."users"), $1, $2, $3, $4)
+    INSERT INTO public."users" (name, email, permission,sub)
+    VALUES ($1, $2, $3, $4)
     RETURNING *;
   `;
   

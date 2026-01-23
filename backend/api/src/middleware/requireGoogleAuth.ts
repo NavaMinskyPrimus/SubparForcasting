@@ -7,7 +7,6 @@ declare global {
   namespace Express {
     interface Request {
       auth?: {
-        email: string;
         sub: string;
       };
     }
@@ -15,19 +14,17 @@ declare global {
 }
 
 const TEST_USER = {
-  email: "navaminskyprimus@gmail.com",
   sub: "sub2",
 };
 
 export async function requireGoogleAuth(req: Request, res: Response, next: NextFunction) {
   if (process.env.AUTH_BYPASS === "true" || process.env.NODE_ENV === "test") {
-      const email = req.header("x-test-email");
     const sub = req.header("x-test-sub");
-    if (email && sub) {
-      req.auth = { email, sub };
+    if (sub) {
+      req.auth = {sub };
       return next();
     }else{
-      req.auth = { email: TEST_USER.email, sub: TEST_USER.sub };
+      req.auth = { sub: TEST_USER.sub };
       return next();
     }
   }
@@ -46,14 +43,13 @@ export async function requireGoogleAuth(req: Request, res: Response, next: NextF
     });
 
     const payload = ticket.getPayload();
-    const email = payload?.email;
     const sub = payload?.sub;
 
-    if (!email || !sub) {
+    if ( !sub) {
       return res.status(401).json({ error: "Invalid token payload" });
     }
 
-    req.auth = { email, sub };
+    req.auth = { sub };
     return next();
   } catch {
     return res.status(401).json({ error: "Invalid or expired token" });

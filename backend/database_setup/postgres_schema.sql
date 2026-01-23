@@ -14,7 +14,9 @@ CREATE TABLE users (
 
 CREATE TABLE questions (
   "questionid" INTEGER PRIMARY KEY DEFAULT nextval('"Question_Id_seq"'),
-  "question" TEXT
+  "question" TEXT,
+  "year" SMALLINT NOT NULL
+  
 );
 
 CREATE TABLE answers (

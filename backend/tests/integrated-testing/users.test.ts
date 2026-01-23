@@ -30,7 +30,6 @@ describe('Users API Integration Tests', () => {
         it('should actually remove a user', async () => {
             const response = await request(app)
                 .delete('/api/users')
-                .set("x-test-email", "test@user.org")
                 .set("x-test-sub", "testsub")
                 .send({ userid: id })
                 .expect(200);
@@ -47,7 +46,6 @@ describe('Users API Integration Tests', () => {
         it('should actually remove a user', async () => {
             const response = await request(app)
                 .delete('/api/users')
-                .set("x-test-email", "email@email.com")
                 .set("x-test-sub", "sub3")
                 .send({ userid: id })
                 .expect(200);

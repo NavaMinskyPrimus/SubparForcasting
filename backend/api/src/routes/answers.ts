@@ -1,8 +1,10 @@
 import { Router } from 'express';
 import {requireGoogleAuth} from '../middleware/requireGoogleAuth';
-import { handleGetAnswersByUID } from '../controllers/answer-controllers';
+import { handleDeleteAnswer, handleGetAnswersByUID, handlePostPutAnswer } from '../controllers/answer-controllers';
 const answerRoutes: Router = Router();
 answerRoutes.get("/", handleGetAnswersByUID);
+answerRoutes.post("/", requireGoogleAuth, handlePostPutAnswer);
+answerRoutes.delete("/", requireGoogleAuth, handleDeleteAnswer);
 
 
 export default answerRoutes;
