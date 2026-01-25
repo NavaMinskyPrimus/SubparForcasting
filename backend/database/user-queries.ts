@@ -27,6 +27,11 @@ export async function postUser(
   const query = `
     INSERT INTO public."users" (name, email, permission,sub)
     VALUES ($1, $2, $3, $4)
+    ON CONFLICT (sub)
+    DO UPDATE SET
+      name = EXCLUDED.name,
+      email = EXCLUDED.email,
+      permission = EXCLUDED.permission
     RETURNING *;
   `;
   
@@ -35,6 +40,7 @@ export async function postUser(
   
   return res.rows[0];
 }
+
 
 export async function deleteUserWithAssociatedAnswers(userid: number) {
   const client: PoolClient = await pool.connect();
