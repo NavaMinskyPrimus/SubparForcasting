@@ -7,9 +7,11 @@ const port =  Number(process.env.PORT);
 export const app=express()
 import userRoutes from './api/src/routes/users';
 import answerRoutes from './api/src/routes/answers';
+import loginRouter from './api/src/routes/login';
 app.use(express.json());
 
 app.use("/api/users", userRoutes);
+app.use("/api/login", loginRouter);
 app.use("/api/answers", answerRoutes);
 
 app.get('/api/health', (req: Request, res: Response) => {

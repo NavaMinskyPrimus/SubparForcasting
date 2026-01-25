@@ -44,7 +44,6 @@ export async function handlePostPutAnswer(req: Request, res: Response) {
         const uid = currentUser.userid;
         const qid = req.body?.questionid;
         const prob = req.body?.probability;
-        console.log(qid)
         if (qid === undefined || prob === undefined) {
             return res.status(400).json({
                 error: "questionid and probability are required",

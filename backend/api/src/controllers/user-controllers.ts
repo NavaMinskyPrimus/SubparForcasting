@@ -31,7 +31,6 @@ export async function  handleGetUserByID(req: Request, res: Response) {
 
 export async function  handleGetCurrentUser(req: Request, res: Response) {
     try {
-        console.log("hello");
         if (!req.auth) {
         return res.status(401).json({ error: 'Not authenticated' });
         }
@@ -41,8 +40,7 @@ export async function  handleGetCurrentUser(req: Request, res: Response) {
         }
         const user = await getUserBySub(sub);
         if (!user) {
-        console.log(sub)
-        return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ error: 'User not found' });
         }
         return res.json(user);
   } catch (err) {

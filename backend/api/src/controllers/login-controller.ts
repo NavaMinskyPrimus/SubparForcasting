@@ -1,0 +1,26 @@
+import { getUserBySub, postUser } from '../../../database/user-queries';
+import type { Request, Response } from "express";
+
+export async function handleLogin(req: Request, res: Response) {
+    try{
+       if (!req.auth) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+        const sub = req.auth.sub;
+        if (!sub) {
+            return res.status(400).json({ error: 'No sub on authenticated user' });
+        }
+        const user = await getUserBySub(sub);
+        if(user != null){
+            console.log("returning existing user");
+            return res.status(200).json(user);
+        }
+        const name = req.body?.name;
+        const email = req.body?.email;
+        const newuser = await postUser(name, email, "user", sub);
+        return res.status(200).json(newuser);
+    }catch (err) {
+        console.error("Failed to log in user", err);
+        res.status(500).json({ err: "Failed to login user" });
+    }
+}
