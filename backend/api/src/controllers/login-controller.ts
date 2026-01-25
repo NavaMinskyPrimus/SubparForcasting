@@ -3,10 +3,7 @@ import type { Request, Response } from "express";
 
 export async function handleLogin(req: Request, res: Response) {
     try{
-       if (!req.auth) {
-            return res.status(401).json({ error: 'Not authenticated' });
-        }
-        const sub = req.auth.sub;
+        const sub = req.body.sub
         if (!sub) {
             return res.status(400).json({ error: 'No sub on authenticated user' });
         }

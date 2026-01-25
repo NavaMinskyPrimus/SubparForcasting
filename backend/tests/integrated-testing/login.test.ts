@@ -8,28 +8,24 @@ describe('Answers API Integration Tests', () => {
         it('should log in existing user', async () => {
             const response = await request(app)
                 .put('/api/login')
-                .set("x-test-sub", "sub1")
-                .send({})
+                .send({sub: "sub1"})
                 .expect(200);
             expect(response.body.name).toBe("Celine");
         });
         it('should fail in a few ways', async () => {
             await request(app)
                 .put('/api/login')
-                .set("x-test-sub", "sub5")
                 .send({name: "Test User"})
                 .expect(400);
             await request(app)
                 .put('/api/login')
-                .set("x-test-sub", "sub5")
-                .send({name: "Test User", email: null})
+                .send({name: "Test User", email: null, sub: "sub"})
                 .expect(400);
         });
         it('should log in new user', async () => {
             const response = await request(app)
                 .put('/api/login')
-                .set("x-test-sub", "sub4")
-                .send({name: "Test User", email: "test@user.org"})
+                .send({name: "Test User", email: "test@user.org", sub: "sub4"})
                 .send({})
                 .expect(200);
             console.log(response.body)

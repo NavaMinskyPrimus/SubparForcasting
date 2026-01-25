@@ -16,17 +16,26 @@ export const {
   ],
 
   events: {
-    async signIn({ user }) {
-      // user.email is available here
-      await fetch(`${process.env.BACKEND_URL}/users`, {
-        method: "POST",
+    async signIn({ user, account }) {
+      const url = `${process.env.BACKEND_URL}/api/login`;
+      const sub = account?.providerAccountId;
+
+      if (!sub) {
+        throw new Error("Missing Google sub");
+      }
+
+      const res = await fetch(url, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: user.email,
-          name: user.name,
-          sub: user.sub
-        }),
+        body: JSON.stringify({ email: user.email, name: user.name, sub: sub }),
       });
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        console.error("Backend login failed", res.status, text);
+        // Optional: throw to make the failure obvious in logs
+        throw new Error(`Backend login failed: ${res.status}`);
+      }
     },
   },
 });

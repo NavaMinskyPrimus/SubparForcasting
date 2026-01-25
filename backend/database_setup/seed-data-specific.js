@@ -12,8 +12,8 @@ const users = [
     },
     {
         userid: 2,
-        name: 'Nava',
-        email: 'navaminskyprimus@gmail.com',
+        name: 'Ima',
+        email: 'ima@gmail.com',
         permission: "user",
         sub: "sub2"
     },

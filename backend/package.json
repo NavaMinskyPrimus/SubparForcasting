@@ -4,10 +4,12 @@
     "private": true,
     "main": "server.js",
     "scripts": {
-        "test": "jest --runInBand",
+        "test": "./database_setup/scripts/local_setup.sh && jest --runInBand",
         "start": "node server.js",
         "dev": "ts-node-dev --respawn server.ts",
-        "build": "tsc"
+        "build": "tsc",
+        "testreset": "./database_setup/scripts/local_setup.sh",
+        "checkdata": "./database_setup/scripts/database-check.sh"
     },
     "dependencies": {
         "dotenv": "^16.6.1",

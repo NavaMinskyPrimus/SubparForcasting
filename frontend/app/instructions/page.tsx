@@ -1,5 +1,6 @@
 // app/instructions/page.tsx
 import styles from "./Instructions.module.css";
+import LogoutButton from "./logoutbutton";
 
 type TocItem = { id: string; label: string };
 
@@ -39,6 +40,10 @@ export default function InstructionsPage() {
   return (
     <main className={styles.main}>
       <header className={styles.header}>
+        <div className={styles.headerTopRow}>
+          <h1 className={styles.h1}>Subparforecasting, 2026</h1>
+          <LogoutButton />
+        </div>
         <h1 className={styles.h1}>Subparforecasting, 2026</h1>
         <p className={styles.lede}>
           For the sixth year, we’re doing a weird and supposedly fun activity to celebrate the New Year:
