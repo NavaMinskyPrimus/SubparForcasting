@@ -17,6 +17,8 @@ export async function handleLogin(req: Request, res: Response) {
         if(name == null || email == null || name == undefined || email == undefined){
             return res.status(400).json({error: "name and email are requiered"});
         }
+        console.log("returning new user");
+
         const newuser = await postUser(name, email, "user", sub);
         return res.status(200).json(newuser);
     }catch (err) {
