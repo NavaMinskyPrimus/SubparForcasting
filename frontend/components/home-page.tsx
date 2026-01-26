@@ -7,7 +7,7 @@ import { Header } from '@/components/header';
 import { Target, BookOpen, TrendingUp } from 'lucide-react';
 import { CURRENT_YEAR, GAME_YEAR_NUMBER } from '@/lib/constants';
 
-export function HomePage() {
+export function HomePage({ isAdmin }: { isAdmin: boolean }) {
   const router = useRouter();
 
   // TODO: Replace with actual logic to check if questions are open
@@ -17,7 +17,7 @@ export function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
-      <Header />
+      <Header isAdmin={isAdmin} />
       <div className="p-8">
         <div className="max-w-5xl mx-auto space-y-10">
           {/* Welcome Banner */}

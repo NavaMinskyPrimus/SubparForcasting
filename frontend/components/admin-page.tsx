@@ -34,7 +34,7 @@ export function AdminPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#228B22] via-blue-600 to-purple-600">
-      <Header />
+      <Header isAdmin={true} />
 
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="text-center mb-8">

@@ -1,5 +1,6 @@
 import { HomePage } from "@/components/home-page";
 
-export default function Page() {
-  return <HomePage />;
+export default async function Page() {
+
+  return <HomePage isAdmin={true}/>;
 }

@@ -6,9 +6,8 @@ import { LogOut, Settings, Home, Target, BookOpen, TrendingUp } from 'lucide-rea
 import { CURRENT_YEAR } from '@/lib/constants';
 import { logout } from '@/lib/actions';
 
-export function Header() {
+export function Header({ isAdmin }: { isAdmin: boolean }) {
   const router = useRouter();
-
   return (
     <div className="sticky top-0 z-50 bg-gradient-to-r from-[#228B22] via-blue-600 to-purple-600 text-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -57,7 +56,7 @@ export function Header() {
             Results
           </Button>
 
-          <Button
+          {isAdmin && <Button
             variant="ghost"
             size="sm"
             onClick={() => router.push('/admin')}
@@ -65,7 +64,7 @@ export function Header() {
           >
             <Settings className="w-4 h-4" />
             Admin
-          </Button>
+          </Button>}
 
           <form action={logout}>
             <Button

@@ -84,7 +84,7 @@ export function QuestionsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-      <Header />
+      <Header isAdmin={true} />
       <div className="p-4 md:p-8">
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="flex items-center justify-end">

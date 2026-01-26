@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn, signOut } from "@/auth";
+import { signIn, signOut, auth } from "@/auth";
 
 export async function loginWithGoogle() {
   console.log("User clicked checkout button");
@@ -9,4 +9,12 @@ export async function loginWithGoogle() {
 
 export async function logout() {
   await signOut({ redirectTo: "/" });
+}
+
+export async function checkAuth(){
+  return await auth();
+}
+
+export async function isAdmin(){
+  const session = await auth();
 }
