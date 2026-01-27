@@ -6,14 +6,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Header } from '@/components/header';
 import { Target, BookOpen, TrendingUp } from 'lucide-react';
 import { CURRENT_YEAR, GAME_YEAR_NUMBER } from '@/lib/constants';
+import { Timestamp } from 'next/dist/server/lib/cache-handlers/types';
 
-export function HomePage({ isAdmin }: { isAdmin: boolean }) {
+export function HomePage({ isAdmin,questionsAreOpen, dueDate}: { isAdmin: boolean, questionsAreOpen: boolean, dueDate: Timestamp}) {
   const router = useRouter();
 
   // TODO: Replace with actual logic to check if questions are open
   // This should check against the opening/closing dates set in admin
-  const questionsAreOpen = true;
-  const dueDate = "Monday, January 19th"; // TODO: Get from admin settings
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
@@ -24,7 +23,7 @@ export function HomePage({ isAdmin }: { isAdmin: boolean }) {
           <div className="text-center py-12 relative">
             <div className="absolute inset-0 bg-gradient-to-r from-green-100 via-blue-100 to-purple-100 rounded-3xl opacity-60"></div>
             <div className="relative">
-              <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-[#228B22] via-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+              <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-black to-black bg-clip-text text-transparent mb-4">
                 Welcome to Subparforecasting, {CURRENT_YEAR}!
               </h1>
               {questionsAreOpen ? (
@@ -42,16 +41,16 @@ export function HomePage({ isAdmin }: { isAdmin: boolean }) {
           {/* Action Cards */}
           <div className="grid md:grid-cols-3 gap-6">
             {/* Instructions - Left */}
-            <Card className="border-2 border-blue-200 shadow-lg">
+            <Card className="border-2 border-green-200 shadow-lg">
               <CardContent className="pt-6 text-center space-y-4">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 shadow-md">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-green-600 to-green-600 shadow-md">
                   <BookOpen className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-slate-900">Instructions and Advice</h3>
                 <Button
                   size="lg"
                   onClick={() => router.push('/instructions')}
-                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold"
+                  className="w-full bg-gradient-to-r from-green-600 to-green-600 hover:from-green-700 hover:to-green-700 text-white font-semibold"
                 >
                   Read Instructions →
                 </Button>
@@ -59,9 +58,9 @@ export function HomePage({ isAdmin }: { isAdmin: boolean }) {
             </Card>
 
             {/* Questions - Middle */}
-            <Card className="border-2 border-green-200 shadow-lg">
+            <Card className="border-2 border-blue-200 shadow-lg">
               <CardContent className="pt-6 text-center space-y-4">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-[#228B22] to-green-600 shadow-md">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-blue-600 shadow-md">
                   <Target className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-slate-900">Questions</h3>
@@ -71,7 +70,7 @@ export function HomePage({ isAdmin }: { isAdmin: boolean }) {
                     router.push('/questions');
                     window.scrollTo(0, 0);
                   }}
-                  className="w-full bg-gradient-to-r from-[#228B22] to-green-600 hover:from-green-700 hover:to-green-800 text-white font-semibold"
+                  className="w-full bg-gradient-to-r from-blue-600 to-blue-600 hover:from-blue-700 hover:to-blue-700 text-white font-semibold"
                 >
                   Go to Questions →
                 </Button>
@@ -81,14 +80,14 @@ export function HomePage({ isAdmin }: { isAdmin: boolean }) {
             {/* Past Results - Right */}
             <Card className="border-2 border-purple-200 shadow-lg">
               <CardContent className="pt-6 text-center space-y-4">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 shadow-md">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-purple-500 shadow-md">
                   <TrendingUp className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-slate-900">Past Results</h3>
                 <Button
                   size="lg"
                   onClick={() => router.push('/results')}
-                  className="w-full bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white font-semibold"
+                  className="w-full bg-gradient-to-r from-purple-500 to-purple-500 hover:from-purple-600 hover:to-purple-600 text-white font-semibold"
                 >
                   View Results →
                 </Button>

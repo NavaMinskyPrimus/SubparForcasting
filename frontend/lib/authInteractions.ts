@@ -1,6 +1,7 @@
 "use server";
 
 import { signIn, signOut, auth } from "@/auth";
+import {redirect} from "next/navigation";
 
 export async function loginWithGoogle() {
   console.log("User clicked checkout button");
@@ -12,7 +13,11 @@ export async function logout() {
 }
 
 export async function checkAuth(){
-  return await auth();
+  const session = await auth();
+    if (!session?.user) {
+      redirect("/"); 
+    }
+  return session
 }
 
 export async function isAdmin(){

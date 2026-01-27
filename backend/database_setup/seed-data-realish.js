@@ -19,6 +19,12 @@ const users = [
     },
 ];
 
+const settings = {
+    id: true,
+    questions_open: '2026-01-02T00:00:00Z',
+    questions_close: '2026-01-09T00:00:00Z'
+}
+
 const questions = [
     {
         questionid: 1,

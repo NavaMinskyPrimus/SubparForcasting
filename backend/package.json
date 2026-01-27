@@ -10,7 +10,7 @@
         "build": "tsc",
         "reset-data-test": "./database_setup/scripts/local_setup.sh seed-data-test.js",
         "reset-data-real": "./database_setup/scripts/local_setup.sh seed-data-realish.js",
-        "checkdata": "./database_setup/scripts/database-check.sh"
+        "check-data": "./database_setup/scripts/database-check.sh"
     },
     "dependencies": {
         "dotenv": "^16.6.1",

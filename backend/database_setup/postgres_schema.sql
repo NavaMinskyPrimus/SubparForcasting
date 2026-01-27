@@ -12,6 +12,12 @@ CREATE TABLE users (
   CONSTRAINT users_email_unique UNIQUE ("email")
 );
 
+CREATE TABLE settings (
+  id boolean PRIMARY KEY DEFAULT true,     -- forces single row
+  questions_open  timestamptz NOT NULL,
+  questions_close timestamptz NOT NULL
+);
+
 CREATE TABLE questions (
   "questionid" INTEGER PRIMARY KEY DEFAULT nextval('"Question_Id_seq"'),
   "question" TEXT,
