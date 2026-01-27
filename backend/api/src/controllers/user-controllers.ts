@@ -32,7 +32,7 @@ export async function  handleGetUserByID(req: Request, res: Response) {
 export async function  handleGetCurrentUser(req: Request, res: Response) {
     try {
         if (!req.auth) {
-        return res.status(401).json({ error: 'Not authenticated' });
+            return res.status(401).json({ error: 'Not authenticated' });
         }
         const sub = req.auth.sub;
         if (!sub) {

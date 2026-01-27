@@ -14,7 +14,22 @@ export const {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-
+  callbacks: {
+    async jwt({ token, account }) {
+      if (account?.id_token) {
+        token.idToken = account.id_token;
+      }
+      if (account?.providerAccountId) {
+        token.sub = account.providerAccountId; // optional, convenience
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      // Expose token to the client if you need client-side fetches
+      (session as any).idToken = token.idToken;
+      return session;
+    },
+  },
   events: {
     async signIn({ user, account }) {
       const url = `${process.env.BACKEND_URL}/api/login`;

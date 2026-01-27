@@ -1,6 +1,14 @@
 import { HomePage } from "@/components/home-page";
+import {auth} from "@/auth";
+import {redirect} from "next/navigation";
+import { isAdmin } from "@/lib/actions";
 
 export default async function Page() {
-
-  return <HomePage isAdmin={true}/>;
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/"); 
+  }
+  const isa = await isAdmin();
+  console.log(isAdmin);
+  return <HomePage isAdmin={isa}/>;
 }

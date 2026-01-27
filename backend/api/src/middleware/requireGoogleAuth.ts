@@ -21,7 +21,7 @@ export async function requireGoogleAuth(req: Request, res: Response, next: NextF
   if (process.env.AUTH_BYPASS === "true" || process.env.NODE_ENV === "test") {
     const sub = req.header("x-test-sub");
     if (sub) {
-      req.auth = {sub };
+      req.auth = {sub};
       return next();
     }else{
       req.auth = { sub: TEST_USER.sub };
@@ -30,8 +30,12 @@ export async function requireGoogleAuth(req: Request, res: Response, next: NextF
   }
 
   try {
+    console.log("authentication middleware running")
     const header = req.header("authorization");
     if (!header?.startsWith("Bearer ")) {
+      console.log("Missing Authorization Bearer token");
+      console.log(header);
+      
       return res.status(401).json({ error: "Missing Authorization Bearer token" });
     }
 
@@ -46,10 +50,13 @@ export async function requireGoogleAuth(req: Request, res: Response, next: NextF
     const sub = payload?.sub;
 
     if ( !sub) {
+          console.log("Invalid token payload");
+
       return res.status(401).json({ error: "Invalid token payload" });
     }
 
     req.auth = { sub };
+
     return next();
   } catch {
     return res.status(401).json({ error: "Invalid or expired token" });

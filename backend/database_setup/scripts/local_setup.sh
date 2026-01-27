@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-
+SEED_DATA=$1
 echo "cleanup"
 docker rm -f localdb >/dev/null 2>&1 || true
 
@@ -34,5 +34,5 @@ docker exec -i localdb psql -U localuser -d localdb < "$LOCAL_SETUP_DIR/postgres
 
 echo "Seeding local data..."
 BACKEND_DIR="$(cd "$LOCAL_SETUP_DIR/.." && pwd)"
-cd "$BACKEND_DIR" && NODE_ENV=local DB_HOST=localhost DB_USER=localuser DB_PASSWORD=localpass DB_NAME=localdb DB_PORT=5432 node "$LOCAL_SETUP_DIR/seed-data-specific.js"
+cd "$BACKEND_DIR" && NODE_ENV=local DB_HOST=localhost DB_USER=localuser DB_PASSWORD=localpass DB_NAME=localdb DB_PORT=5432 node "$LOCAL_SETUP_DIR/$SEED_DATA"
 echo "Test data seeded!"
