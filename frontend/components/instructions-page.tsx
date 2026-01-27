@@ -35,9 +35,8 @@ function KatexBlock({ tex }: { tex: string }) {
   return <div ref={ref} />;
 }
 
-export function InstructionsPage({ isAdmin, dueDate}: { isAdmin: boolean, dueDate: String}) {
+export function InstructionsPage({ isAdmin, isOpen, dueDate}: { isAdmin: boolean, isOpen: boolean ,dueDate: String}) {
   const router = useRouter();
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
       <Header isAdmin={isAdmin} />
@@ -52,14 +51,14 @@ export function InstructionsPage({ isAdmin, dueDate}: { isAdmin: boolean, dueDat
               Read the questions and assign probabilities,
               that's it!
             </p>
-            {/* TODO: make this banner the result of actual logic for whether the game is going or not */}
-            <div className="pt-4">
+            {/* due date banner */}
+            {isOpen && <div className="pt-4">
               <div className="inline-block bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400 text-white px-8 py-4 rounded-lg shadow-lg">
                 <p className="text-2xl font-bold">
                   Submissions are due on {dueDate}
                 </p>
               </div>
-            </div>
+            </div>}
           </div>
 
           {/* Main Content */}
