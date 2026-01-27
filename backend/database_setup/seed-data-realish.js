@@ -19,11 +19,7 @@ const users = [
     },
 ];
 
-const settings = {
-    id: true,
-    questions_open: '2026-01-02T00:00:00Z',
-    questions_close: '2026-01-09T00:00:00Z'
-}
+const settings = ['2026-01-02T00:00:00Z','2026-01-09T00:00:00Z']
 
 const questions = [
     {
@@ -61,7 +57,7 @@ const answers = [
 const { Client } = require('pg');
 
 async function seedAndUpdateSequences() {
-    await seedDatabase(users, questions, answers);
+    await seedDatabase(users, questions, answers, settings);
     const client = new Client({
         user: process.env.DB_USER || 'localuser',
         host: process.env.DB_HOST || 'localhost',

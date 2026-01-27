@@ -1,6 +1,6 @@
 const { Client } = require("pg");
 // seed mock database with mock users, listings, photos, etc
-async function seedDatabase(users = [], questions = [], answers = []) {
+async function seedDatabase(users = [], questions = [], answers = [], settings=[]) {
     const client = new Client({
         user: process.env.DB_USER || 'localuser', // default is the test database
         host: process.env.DB_HOST || 'localhost',
@@ -26,6 +26,18 @@ async function seedDatabase(users = [], questions = [], answers = []) {
             }
             console.log(`Inserted ${users.length} users`);
         }
+
+        // instsert settings
+        if (settings.length > 0) {
+            await client.query(
+                `INSERT INTO settings ("id", "questions_open", "questions_close")
+                VALUES ($1, $2, $3)
+                ON CONFLICT ("id") DO NOTHING`,
+                [true, settings[0], settings[1]]
+            );
+            console.log(`Inserted ${settings.length} settings`);
+        }
+            
 
         // Insert questions
         if (questions.length > 0) {
