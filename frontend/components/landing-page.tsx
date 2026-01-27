@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { LogIn } from 'lucide-react';
 import { CURRENT_YEAR } from '@/lib/constants';
-import { loginWithGoogle } from '@/lib/actions';
+import { loginWithGoogle } from '@/lib/authInteractions';
 
 export function LandingPage() {
 

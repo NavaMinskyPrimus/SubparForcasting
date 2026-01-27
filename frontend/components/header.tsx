@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { LogOut, Settings, Home, Target, BookOpen, TrendingUp } from 'lucide-react';
 import { CURRENT_YEAR } from '@/lib/constants';
-import { logout } from '@/lib/actions';
+import { logout } from '@/lib/authInteractions';
 
 export function Header({ isAdmin }: { isAdmin: boolean }) {
   const router = useRouter();

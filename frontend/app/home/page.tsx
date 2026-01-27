@@ -1,7 +1,7 @@
 import { HomePage } from "@/components/home-page";
 import {auth} from "@/auth";
 import {redirect} from "next/navigation";
-import { isAdmin } from "@/lib/actions";
+import { isAdmin } from "@/lib/authInteractions";
 
 export default async function Page() {
   const session = await auth();
