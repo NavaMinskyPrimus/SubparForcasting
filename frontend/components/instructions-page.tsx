@@ -35,7 +35,7 @@ function KatexBlock({ tex }: { tex: string }) {
   return <div ref={ref} />;
 }
 
-export function InstructionsPage() {
+export function InstructionsPage({ isAdmin, dueDate}: { isAdmin: boolean, dueDate: String}) {
   const router = useRouter();
 
   return (
