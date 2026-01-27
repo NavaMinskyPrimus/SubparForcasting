@@ -22,9 +22,7 @@ export async function checkAuth(){
 
 export async function isAdmin(){
   const session = await auth();
-  console.log(session?.idToken);
-
-  console.log("Checking admin status");
+  console.log("Checking admin status:");
   const url = `${process.env.BACKEND_URL}/api/users/me`;
   const response = await fetch(url, {
         method: "GET",

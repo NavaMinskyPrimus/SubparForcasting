@@ -8,7 +8,7 @@ import { Target, BookOpen, TrendingUp } from 'lucide-react';
 import { CURRENT_YEAR, GAME_YEAR_NUMBER } from '@/lib/constants';
 import { Timestamp } from 'next/dist/server/lib/cache-handlers/types';
 
-export function HomePage({ isAdmin,questionsAreOpen, dueDate}: { isAdmin: boolean, questionsAreOpen: boolean, dueDate: Timestamp}) {
+export function HomePage({ isAdmin,questionsAreOpen, dueDate}: { isAdmin: boolean, questionsAreOpen: boolean, dueDate: String}) {
   const router = useRouter();
 
   // TODO: Replace with actual logic to check if questions are open
