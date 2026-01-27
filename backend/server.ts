@@ -7,12 +7,14 @@ const port =  Number(process.env.PORT);
 export const app=express()
 import userRoutes from './api/src/routes/users';
 import answerRoutes from './api/src/routes/answers';
-import loginRouter from './api/src/routes/login';
+import loginRoutes from './api/src/routes/login';
+import settingsRoutes from './api/src/routes/settings';
 app.use(express.json());
 
 app.use("/api/users", userRoutes);
-app.use("/api/login", loginRouter);
+app.use("/api/login", loginRoutes);
 app.use("/api/answers", answerRoutes);
+app.use("/api/settings", settingsRoutes);
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'OK' });

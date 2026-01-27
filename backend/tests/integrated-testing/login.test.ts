@@ -26,7 +26,6 @@ describe('Answers API Integration Tests', () => {
             const response = await request(app)
                 .put('/api/login')
                 .send({name: "Test User", email: "test@user.org", sub: "sub4"})
-                .send({})
                 .expect(200);
             console.log(response.body)
             expect(response.body.name).toBe("Test User");

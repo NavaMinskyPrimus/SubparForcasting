@@ -5,6 +5,9 @@ import type { Request, Response } from "express";
 export async function handleGetUsers(req: Request, res: Response) {
     try{
         const users = await getUsers();
+        if (!users) {
+        return res.status(404).json({ error: 'User not found' });
+        }
         res.json(users);
     }catch (err) {
         console.error("Failed to fetch users", err);
@@ -84,7 +87,7 @@ export async function handlePostUser(req: Request, res: Response) {
         const newUser = await postUser(name, email, permission,sub);
         res.status(200).json(newUser);
     }catch(err){
-         console.error("Failed to post user", err);
+        console.error("Failed to post user", err);
         res.status(500).json({ err: "Failed to post user" });
     }
 }

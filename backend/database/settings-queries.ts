@@ -8,6 +8,20 @@ export async function getSettings(){
   const res = await pool.query(query, value);
   return res.rows[0];
 }
+
+export async function setDates(open_date: Date, close_date: Date){
+  const query = `UPDATE public."settings"
+    SET 
+       questions_open = $2,
+       questions_close = $3
+    WHERE id = $1
+    RETURNING *;
+    `;
+  const value = [true, open_date,close_date];
+  const res = await pool.query(query, value);
+  return res.rows[0];
+}
+
 export async function setOpenDate(date: Date){
   const query = `UPDATE public."settings"
     SET 

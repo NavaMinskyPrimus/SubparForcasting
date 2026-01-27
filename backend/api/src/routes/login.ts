@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import {requireGoogleAuth} from '../middleware/requireGoogleAuth';
 import { handleLogin } from '../controllers/login-controller';
-const loginRouter: Router = Router();
+const loginRoutes: Router = Router();
 
-loginRouter.put("/", handleLogin);
+loginRoutes.put("/", handleLogin);
 
 
-export default loginRouter;
+export default loginRoutes;
