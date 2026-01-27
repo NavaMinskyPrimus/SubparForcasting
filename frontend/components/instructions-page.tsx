@@ -40,7 +40,7 @@ export function InstructionsPage({ isAdmin, dueDate}: { isAdmin: boolean, dueDat
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-      <Header isAdmin={true} />
+      <Header isAdmin={isAdmin} />
       <div className="p-4 md:p-8">
         <div className="max-w-5xl mx-auto space-y-8">
           {/* Hero Section */}
@@ -56,8 +56,7 @@ export function InstructionsPage({ isAdmin, dueDate}: { isAdmin: boolean, dueDat
             <div className="pt-4">
               <div className="inline-block bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400 text-white px-8 py-4 rounded-lg shadow-lg">
                 <p className="text-2xl font-bold">
-                  Submissions are due on Monday, January 19th,
-                  2026
+                  Submissions are due on {dueDate}
                 </p>
               </div>
             </div>
