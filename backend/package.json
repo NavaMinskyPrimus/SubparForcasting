@@ -4,13 +4,13 @@
     "private": true,
     "main": "server.js",
     "scripts": {
-        "test": "./database_setup/scripts/local_setup.sh && jest --runInBand",
+        "test": "./database_setup/scripts/local_setup.sh seed-data-test.js && jest --runInBand",
         "start": "node server.js",
         "dev": "ts-node-dev --respawn server.ts",
         "build": "tsc",
-        "reset-data-test": "./database_setup/scripts/local_setup.sh seed-data-test.js",
-        "reset-data-real": "./database_setup/scripts/local_setup.sh seed-data-realish.js",
-        "check-data": "./database_setup/scripts/database-check.sh"
+        "data-reset-test": "./database_setup/scripts/local_setup.sh seed-data-test.js",
+        "data-reset-real": "./database_setup/scripts/local_setup.sh seed-data-realish.js",
+        "data-check": "./database_setup/scripts/database-check.sh"
     },
     "dependencies": {
         "dotenv": "^16.6.1",

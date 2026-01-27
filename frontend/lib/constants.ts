@@ -1,2 +1,5 @@
-export const CURRENT_YEAR = 2026;
-export const GAME_YEAR_NUMBER = 6; // 6th year, change to 7 for 7th year, etc.
+const currentDate = new Date();
+const currentYear = currentDate.getFullYear();
+
+export const CURRENT_YEAR = currentYear;
+export const GAME_YEAR_NUMBER = currentYear-2020; // 6th year, change to 7 for 7th year, etc.

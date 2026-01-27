@@ -1,8 +1,8 @@
 require('dotenv').config();
 import { pool } from './../../database/pool';
-import { deleteAnswersByUID, deleteAnswer, getAnswersByUID, postAnswer} from '../../database/answer-queries';
 import { describe } from 'node:test';
 import { deleteUserWithAssociatedAnswers, getUserByID, postUser } from '../../database/user-queries';
+import { deleteAnswersByUID, deleteAnswer, getAnswersByUID, postAnswer} from '../../database/answer-queries';
 
 afterAll(async () => {
   await pool.end();

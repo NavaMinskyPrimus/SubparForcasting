@@ -25,6 +25,7 @@ docker exec -i localdb psql -U localuser -d localdb << 'EOF'
 DROP TABLE IF EXISTS "users" CASCADE;
 DROP TABLE IF EXISTS "questions" CASCADE;
 DROP TABLE IF EXISTS "answers" CASCADE;
+DROP TABLE IF EXISTS "settings" CASCADE;
 DROP SEQUENCE IF EXISTS "Users_UserID_seq" CASCADE;
 DROP SEQUENCE IF EXISTS "Question_Id_seq" CASCADE;
 DROP TYPE IF EXISTS user_permission CASCADE;
