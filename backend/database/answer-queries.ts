@@ -32,6 +32,10 @@ export async function getAnswersByUID(userid: number){
   const res = await pool.query('SELECT * FROM public."answers" WHERE userid = $1;', [userid]);
   return res.rows;
 }
+export async function getAnswersByQID(qid: number){
+  const res = await pool.query('SELECT * FROM public."answers" WHERE questionid = $1;', [qid]);
+  return res.rows;
+}
 
 export async function checkAnswer(userid: number, questionid: number){
   const res = await pool.query('SELECT * FROM public."answers" WHERE userid = $1 AND questionid = $2;', [userid, questionid]);

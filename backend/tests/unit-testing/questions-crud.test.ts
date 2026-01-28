@@ -1,7 +1,8 @@
 require('dotenv').config();
 import { pool } from './../../database/pool';
 import { describe } from 'node:test';
-import { getQuestion, getQuestionsByYear, postQuestion, putQuestion } from '../../database/question-queries';
+import { deleteQuestionWithAssociatedAnswers, getQuestion, getQuestionsByYear, postQuestion, putQuestion } from '../../database/question-queries';
+import {checkAnswer, getAnswersByQID, getAnswersByUID, postAnswer} from '../../database/answer-queries';
 
 describe('Database CRUD tests for questions', () => {
     describe('get tests', () => {
@@ -53,6 +54,23 @@ describe('Database CRUD tests for questions', () => {
             expect(questionCopy.text).toBe("did it update?")
             expect(questionCopy.year).toBe(questionUpdated.year)
             expect(questionCopy.questionid).toBe(questionUpdated.questionid)
+        })
+        it('add some answers', async () => {
+            const a1 = await postAnswer(1,qid,50)
+            const a2 = await postAnswer(2,qid,40)
+            const answers = await getAnswersByQID(qid)
+            expect(answers).toBeDefined()
+            expect(Array.isArray(answers)).toBe(true)
+            expect(answers.length).toBe(2)
+        })
+        it('delete question', async () => {
+            await deleteQuestionWithAssociatedAnswers(qid)
+            const q = await getQuestion(qid)
+            expect(q).toBe(null)
+            const answers = await getAnswersByQID(qid)
+            expect(answers).toBeDefined()
+            expect(Array.isArray(answers)).toBe(true)
+            expect(answers.length).toBe(0)
         })
     });
 });

@@ -2,7 +2,7 @@ require('dotenv').config();
 import { pool } from './../../database/pool';
 import { describe } from 'node:test';
 import { deleteUserWithAssociatedAnswers, getUserByID, postUser } from '../../database/user-queries';
-import { deleteAnswersByUID, deleteAnswer, getAnswersByUID, postAnswer} from '../../database/answer-queries';
+import { deleteAnswersByUID, deleteAnswer, getAnswersByUID, postAnswer, getAnswersByQID} from '../../database/answer-queries';
 
 afterAll(async () => {
   await pool.end();
@@ -21,6 +21,14 @@ describe('Database CRUD tests for user queries', () => {
             expect(questionids).toContain(1);
             expect(questionids).toContain(2);
         });
+        it('should get all answers for question 1', async () =>{
+            const answers = await getAnswersByQID(1);
+            expect(answers).toBeDefined();
+            expect(Array.isArray(answers)).toBe(true);
+            const userids = answers.map((answer: any) => answer.userid);
+            expect(userids).toContain(1);
+            expect(userids).toContain(2);
+        })
         it('should post an answer', async () => {
             const inserted = await postAnswer(2,2, 50);
             const uid = inserted.userid;
