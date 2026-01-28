@@ -17,30 +17,20 @@ export async function deleteAnswer(userid: number,questionid: number){
 }
 export async function postAnswer(userid: number, questionid: number, probability: number){
     const query = `
-        INSERT INTO public."answers" (userid, questionid, probability)
-        VALUES ($1, $2, $3)
-        RETURNING *;
-    `;
+    INSERT INTO public."answers" (userid, questionid, probability)
+    VALUES ($1, $2, $3)
+    ON CONFLICT (userid, questionid)
+    DO UPDATE SET
+      probability = EXCLUDED.probability
+    RETURNING *;
+  `;
     const values = [userid, questionid, probability];
     const res = await pool.query(query, values);
-    
     return res.rows[0];
 }
 export async function getAnswersByUID(userid: number){
   const res = await pool.query('SELECT * FROM public."answers" WHERE userid = $1;', [userid]);
   return res.rows;
-}
-
-export async function putAnswer(userid: number, questionid: number, probability: number){
-    const query = `UPDATE public."answers"
-    SET 
-        probability = $3
-    WHERE userid = $1 AND questionid = $2
-    RETURNING *;
-    `;
-    const values =  [userid, questionid, probability];
-    const res = await pool.query(query, values);
-    return res.rows[0];
 }
 
 export async function checkAnswer(userid: number, questionid: number){

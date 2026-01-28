@@ -29,12 +29,12 @@ const users = [
 const questions = [
     {
         questionid: 1,
-        question: 'What are the chances i EAT YOU',
+        text: 'What are the chances i EAT YOU',
         year: 2010
     },
     {
         questionid: 2,
-        question: 'Will my dog eat food tomorow',
+        text: 'Will my dog eat food tomorow',
         year: 2011
     },
 ];

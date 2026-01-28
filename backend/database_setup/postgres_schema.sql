@@ -20,7 +20,7 @@ CREATE TABLE settings (
 
 CREATE TABLE questions (
   "questionid" INTEGER PRIMARY KEY DEFAULT nextval('"Question_Id_seq"'),
-  "question" TEXT,
+  "text" TEXT,
   "year" SMALLINT NOT NULL
   
 );

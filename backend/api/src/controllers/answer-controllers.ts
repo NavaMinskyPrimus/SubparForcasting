@@ -1,4 +1,4 @@
-import {deleteAnswer, putAnswer, postAnswer, getAnswersByUID, checkAnswer} from '../../../database/answer-queries';
+import {deleteAnswer, postAnswer, getAnswersByUID, checkAnswer} from '../../../database/answer-queries';
 import {getQuestion} from '../../../database/question-queries';
 import type { Request, Response } from "express";
 import { getUserByID, getUserBySub } from '../../../database/user-queries';
@@ -27,7 +27,7 @@ export async function handleGetAnswersByUID(req: Request, res: Response) {
         res.status(500).json({ err: "Failed to get answers" });
     }
 }
-export async function handlePostPutAnswer(req: Request, res: Response) {
+export async function handlePostAnswer(req: Request, res: Response) {
     try{
         if (!req.body ){
             res.status(400).json({err: "body is undefined"});
@@ -65,8 +65,7 @@ export async function handlePostPutAnswer(req: Request, res: Response) {
                 error: "No question associated with given question",
             });
         }
-        const check = await checkAnswer(uid, qid);
-        const answers = (check == null) ? await postAnswer(uid, qid, prob) : await putAnswer(uid, qid, prob);
+        const answers = await postAnswer(uid, qid, prob);
         res.status(200).json(answers);
     }catch(err){
         console.error("Failed to post answers", err);

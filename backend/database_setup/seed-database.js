@@ -45,10 +45,10 @@ async function seedDatabase(users = [], questions = [], answers = [], settings=[
             for (const question of questions) {
                 await client.query(
                     `INSERT INTO questions
-                     ("questionid", "question", "year")
+                     ("questionid", "text", "year")
                      VALUES ($1, $2, $3)
                      ON CONFLICT ("questionid") DO NOTHING`,
-                    [question.questionid, question.question, question.year]
+                    [question.questionid, question.text, question.year]
                 );
             }
             console.log(`Inserted ${questions.length} questions`);

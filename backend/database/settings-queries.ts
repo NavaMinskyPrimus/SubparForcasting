@@ -1,6 +1,5 @@
 
 import { pool } from './pool';
-import type { PoolClient } from "pg";
 
 export async function getSettings(){
   const query = `SELECT * FROM public."settings" WHERE id = $1`;
