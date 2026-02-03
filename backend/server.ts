@@ -9,9 +9,11 @@ import userRoutes from './api/src/routes/users';
 import answerRoutes from './api/src/routes/answers';
 import loginRoutes from './api/src/routes/login';
 import settingsRoutes from './api/src/routes/settings';
+import questionsRoutes from './api/src/routes/questions';
 app.use(express.json());
 
 app.use("/api/users", userRoutes);
+app.use("/api/questions", questionsRoutes);
 app.use("/api/login", loginRoutes);
 app.use("/api/answers", answerRoutes);
 app.use("/api/settings", settingsRoutes);
