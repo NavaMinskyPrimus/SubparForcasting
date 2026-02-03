@@ -23,7 +23,7 @@ export async function handleGetAnswersByUID(req: Request, res: Response) {
         const answers = await getAnswersByUID(uid);
         res.status(200).json(answers);
     }catch(err){
-         console.error("Failed to get answers", err);
+        console.error("Failed to get answers", err);
         res.status(500).json({ err: "Failed to get answers" });
     }
 }

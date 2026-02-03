@@ -4,13 +4,16 @@ import { signIn, signOut, auth } from "@/auth";
 import {redirect} from "next/navigation";
 
 export async function loginWithGoogle() {
-  console.log("User clicked checkout button");
+  console.log("User clicked login button");
   await signIn("google", { redirectTo: "/home" });
 }
 
 export async function logout() {
-  await signOut({ redirectTo: "/" });
-}
+  try {
+    await signOut({ redirectTo: "/" });
+  } catch {
+    redirect("/");
+  }}
 
 export async function checkAuth(){
   const session = await auth();
@@ -29,9 +32,20 @@ export async function isAdmin(){
         headers: { Authorization: `Bearer ${session?.idToken}` },
       });
   if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      await safeSignOutAndRedirect();
+    }
     throw new Error(`Request failed: ${response.status}`);
   }
   const body = await response.json(); 
   return (body.permission == "admin");
 
+}
+
+async function safeSignOutAndRedirect() {
+  try {
+    await signOut({ redirectTo: "/" });
+  } catch {
+    redirect("/");
+  }
 }
