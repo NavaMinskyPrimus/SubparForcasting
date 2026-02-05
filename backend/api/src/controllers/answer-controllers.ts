@@ -30,31 +30,37 @@ export async function handleGetAnswersByUID(req: Request, res: Response) {
 export async function handlePostAnswer(req: Request, res: Response) {
     try{
         if (!req.body ){
+            console.error("handlePostAnswer: Body is undefined")
             res.status(400).json({err: "body is undefined"});
             return
         }
         if (!req.auth?.sub) {
+            console.error("handlePostAnswer: Authentication required")
             return res.status(401).json({ error: 'Authentication required' });
         }
         const sub = req.auth.sub;
         const currentUser = await getUserBySub(sub);
         if(!currentUser){
+            console.error("handlePostAnswer: Current user not found")
             return res.status(404).json({ error: 'current user not found' });
         }
         const uid = currentUser.userid;
         const qid = req.body?.questionid;
         const prob = req.body?.probability;
         if (qid === undefined || prob === undefined) {
+            console.error("handlePostAnswer: questionid and probability are require")
             return res.status(400).json({
                 error: "questionid and probability are required",
             });
         }
         if (typeof qid !== "number" || typeof prob !== "number"){
+            console.error("handlePostAnswer: questionid and probability must be numbers")
             return res.status(400).json({
                 error: "questionid and probability must be numbers",
             });
         }
         if(prob < 0 || prob > 100){
+            console.error("handlePostAnswer: probability must be between 0 and 100")
             return res.status(400).json({
                 error: "probability must be between 0 and 100",
             });

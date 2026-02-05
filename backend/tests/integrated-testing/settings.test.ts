@@ -42,7 +42,6 @@ describe('Setting API Integration Tests', () => {
             .set("x-test-sub", "sub3")
             .send({questions_open: "2026-02-02T00:00:00.000Z", questions_close : "2026-02-09T00:00:00.000Z"})
             .expect(200);
-        console.log(response_set.body)
         expect(response_set.body.open).toBe("2026-02-02T00:00:00.000Z");
         expect(response_set.body.close).toBe("2026-02-09T00:00:00.000Z");
         const response_reset = await request(app)
@@ -50,8 +49,6 @@ describe('Setting API Integration Tests', () => {
             .set("x-test-sub", "sub3")
             .send({questions_open: "2026-01-02T00:00:00.000Z", questions_close : "2026-01-09T00:00:00.000Z"})
             .expect(200);
-        
-        console.log(response_reset.body)
         expect(response_reset.body.open).toBe("2026-01-02T00:00:00.000Z");
         expect(response_reset.body.close).toBe("2026-01-09T00:00:00.000Z");
     });

@@ -1,10 +1,12 @@
 import { Router } from 'express';
 import {requireGoogleAuth} from '../middleware/requireGoogleAuth';
-import {handleGetQuestion, handleGetQuestionByYear} from '../controllers/question-controllers'
+import {handleDeleteQuestion, handleGetQuestion, handleGetQuestionByYear, handlePostQuestion, handlePutQuestion} from '../controllers/question-controllers'
 const questionsRoutes: Router = Router();
 
-questionsRoutes.get("/year", requireGoogleAuth, handleGetQuestionByYear);
-questionsRoutes.get("/", requireGoogleAuth, handleGetQuestion);
-
+questionsRoutes.get("/year", requireGoogleAuth, handleGetQuestionByYear)
+questionsRoutes.get("/", requireGoogleAuth, handleGetQuestion)
+questionsRoutes.post("/", requireGoogleAuth, handlePostQuestion)
+questionsRoutes.delete("/", requireGoogleAuth, handleDeleteQuestion)
+questionsRoutes.put("/", requireGoogleAuth, handlePutQuestion)
 
 export default questionsRoutes;

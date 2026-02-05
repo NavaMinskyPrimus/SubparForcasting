@@ -66,7 +66,7 @@ export async function handlePostUser(req: Request, res: Response) {
         if((permission != "user" && permission != "admin")){
              res.status(400).json({ err: "permission must be user or admin" });
         }
-        if((name in nothing) || (email in nothing) || (sub in nothing)){
+        if((nothing.includes(name)) || (nothing.includes(email)) || nothing.includes(sub)){
             res.status(400).json({ err: "null/undefined param" });
         }
         const id : number = req.body.userid;
@@ -76,9 +76,7 @@ export async function handlePostUser(req: Request, res: Response) {
         const current_sub = req.auth.sub;
         const currentUser = await getUserBySub(current_sub);
         if(!currentUser){
-            console.log("user not found")
-            console.log(sub)
-
+            console.error("handlePostUser: user not found")
             return res.status(404).json({ error: 'current user not found' });
         }
         if(currentUser.permission != "admin"){
@@ -103,6 +101,7 @@ export async function handleDeleteUser(req: Request, res: Response) {
             return res.status(401).json({ error: 'Authentication required' });
         }
         const sub = req.auth.sub;
+        console.log(sub);
         const currentUser = await getUserBySub(sub);
         if(!currentUser){
             return res.status(404).json({ error: 'current user not found' });
