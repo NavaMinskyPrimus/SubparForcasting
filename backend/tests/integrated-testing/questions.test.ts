@@ -8,14 +8,14 @@ describe('Questions API Integration Tests', () => {
         it('should get question given id', async () => {
             const response = await request(app)
                 .get('/api/questions')
-                .send({questionid: 2})
+                .query({questionid: 2})
                 .expect(200);
             expect(response.body.text).toBe("Will my dog eat food tomorow")
         })
         it('should get question given id', async () => {
             const response = await request(app)
                 .get('/api/questions/year')
-                .send({year: 2010})
+                .query({year: 2010})
                 .expect(200);
             expect(response.body[0].text).toBe("What are the chances i EAT YOU")
         })
@@ -59,7 +59,7 @@ describe('Questions API Integration Tests', () => {
             qids.push(response.body.questionid)
             const getIt = await request(app)
                 .get('/api/questions')
-                .send({questionid: qids[0]})
+                .query({questionid: qids[0]})
                 .expect(200)
             expect(response.body.text).toBe("Did my question post?")
             expect(response.body.year).toBe(2027)
@@ -88,7 +88,7 @@ describe('Questions API Integration Tests', () => {
             qids.push(response.body.questionid)
             const getIt = await request(app)
                 .get('/api/questions')
-                .send({questionid: qids[1]})
+                .query({questionid: qids[1]})
                 .expect(200)
             expect(getIt.body.text).toBe("Is the date right?")
             expect(getIt.body.year).toBe(today.getFullYear())
@@ -117,7 +117,7 @@ describe('Questions API Integration Tests', () => {
             qids.push(response.body.questionid)
             const getIt = await request(app)
                 .get('/api/questions')
-                .send({questionid: qids[2]})
+                .query({questionid: qids[2]})
                 .expect(200)
             expect(getIt.body.text).toBe("Is the date right?")
             expect(getIt.body.year).toBe(oneYearFromToday.getFullYear())
@@ -167,7 +167,7 @@ describe('Questions API Integration Tests', () => {
         it('should edit a question', async () => {
             const before_edits = await request(app)
                 .get('/api/questions')
-                .send({questionid: qids[0]})
+                .query({questionid: qids[0]})
                 .expect(200);
             await request(app)
                 .put('/api/questions')
@@ -176,7 +176,7 @@ describe('Questions API Integration Tests', () => {
                 .expect(200);
             const after_edit = await request(app)
                 .get('/api/questions')
-                .send({questionid: qids[0]})
+                .query({questionid: qids[0]})
                 .expect(200);
             expect(after_edit.body.text).toBe("did it change?")
             expect(after_edit.body.year).toBe(before_edits.body.year)
@@ -222,7 +222,7 @@ describe('Questions API Integration Tests', () => {
                     .expect(200);
                 await request(app)
                     .get('/api/questions')
-                    .send({questionid: qid})
+                    .query({questionid: qid})
                     .expect(404);
             }
         })

@@ -8,7 +8,7 @@ describe('Answers API Integration Tests', () => {
         it('should get all answers', async () => {
             const response = await request(app)
                 .get('/api/answers')
-                .send({userid: 1})
+                .query({userid: 1})
                 .expect(200);
             expect(response.body.length).toBe(2);
         });
@@ -38,7 +38,7 @@ describe('Answers API Integration Tests', () => {
                 .expect(200);
             const response1 = await request(app)
                 .get('/api/answers')
-                .send({userid: 2})
+                .query({userid: 2})
                 .expect(200);
             expect(Array.isArray(response1.body)).toBe(true);
             const probs1 = response1.body.map((answer: any) => answer.probability);
@@ -49,7 +49,7 @@ describe('Answers API Integration Tests', () => {
                 .expect(200);
             const response2 = await request(app)
                 .get('/api/answers')
-                .send({userid: 2})
+                .query({userid: 2})
                 .expect(200);
             const probs2 = response2.body.map((answer: any) => answer.probability);
             expect(probs2).toContain(5)

@@ -5,15 +5,12 @@ import { getUserByID, getUserBySub } from '../../../database/user-queries';
 
 export async function handleGetAnswersByUID(req: Request, res: Response) {
     try{
-        if (!req.body ){
-            res.status(400).json({err: "body is undefined"});
-            return
-        }
-        const uid = req.body?.userid;
-        if (uid === undefined) {
+        const rawUid = req.query.userid;
+        if (rawUid === undefined) {
             return res.status(400).json({err: "uid is requiered"});
         }
-        if (typeof uid !== "number" || !Number.isInteger(uid) || uid <= 0) {
+        const uid = Number(rawUid);
+        if (!Number.isInteger(uid) || uid <= 0) {
             return res.status(400).json({ error: "userid must be a positive integer" });
         }
         const user = await getUserByID(uid);

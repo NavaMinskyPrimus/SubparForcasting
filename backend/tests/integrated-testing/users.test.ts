@@ -9,7 +9,6 @@ describe('Users API Integration Tests', () => {
         it('should get all users', async () => {
             const response = await request(app)
                 .get('/api/users')
-                .send({})
                 .expect(200);
             expect(response.body.length).toBe(3);
         });

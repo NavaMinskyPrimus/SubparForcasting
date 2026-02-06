@@ -4,16 +4,13 @@ import { getSettings } from "../../../database/settings-queries"
 import { getUserBySub } from "../../../database/user-queries";
 export async function handleGetQuestion(req: Request, res: Response) {
     try {
-        if (!req.body ){
-            console.error("handleGetQuestion: body is undefined")
-            return res.status(400).json({err: "body is undefined"});
-        }
-        const qid = req.body?.questionid;
-        if (qid === undefined) {
+        const rawQid = req.query.questionid;
+        if (rawQid === undefined) {
             console.error("handleGetQuestion: qid is requiered")
             return res.status(400).json({err: "qid is requiered"});
         }
-        if (typeof qid !== "number" || !Number.isInteger(qid) || qid <= 0) {
+        const qid = Number(rawQid);
+        if (!Number.isInteger(qid) || qid <= 0) {
             console.error("handleGetQuestion: qid must be a positive integer")
             return res.status(400).json({ error: "userid must be a positive integer" });
         }
@@ -31,16 +28,13 @@ export async function handleGetQuestion(req: Request, res: Response) {
 
 export async function handleGetQuestionByYear(req:Request, res: Response){
     try {
-        if (!req.body ){
-            console.error("handleGetQuestionByYear: body is undefined")
-            return res.status(400).json({err: "body is undefined"});
-        }
-        const year = req.body?.year;
-        if (year === undefined) {
+        const rawYear = req.query.year;
+        if (rawYear === undefined) {
             console.error("handleGetQuestionByYear: year is requiered")
             return res.status(400).json({err: "year is requiered"});
         }
-        if (typeof year !== "number" || !Number.isInteger(year) || year <= 0) {
+        const year = Number(rawYear);
+        if (!Number.isInteger(year) || year <= 0) {
             console.error("handleGetQuestionByYear: year must be a positive integer")
             return res.status(400).json({ error: "year must be a positive integer" });
         }
