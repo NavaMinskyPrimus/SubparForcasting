@@ -9,10 +9,16 @@ import { Plus, Calendar, Edit2, Save, X } from "lucide-react";
 import { CURRENT_YEAR } from "@/lib/constants";
 import { setWindow } from "@/lib/settingsActions";
 import { fromZonedTime } from "date-fns-tz";
+import { addQuestion } from "@/lib/questionsActions";
 
-
-export function AdminPage({ initialQuestions }: { initialQuestions: string[] }) {
-  const router = useRouter();
+type Question = {
+  id: number;
+  text: string;
+};
+export function AdminPage({ rows }: { rows: any[] }) {
+  const data: Question[] = rows.map(
+  (val => ({id: val.questionid, text: val.text}))
+  );
 const q = [
   "Will the global average temperature increase by more than 0.2°C?",
   "Will a major AI company announce AGI capabilities?",
@@ -23,48 +29,63 @@ const q = [
   "Will a major tech company have a CEO change?",
   "Will the S&P 500 be higher than at the start of the year?",
 ];
+  const router = useRouter();
+  const [question_data, setQuestionData] = useState<Question[]>(data);
   const [questions, setQuestions] = useState<string[]>(q);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingText, setEditingText] = useState("");
   const [newQuestion, setNewQuestion] = useState("");
   const [openDate, setOpenDate] = useState("");
   const [closeDate, setCloseDate] = useState("");
-  const [saveStatus, setSaveStatus] = useState<
-    "idle" | "saving" | "success" | "error"
-  >("idle");
-
-  const [saveError, setSaveError] = useState<string | null>(null);
-
-  const handleAddQuestion = () => {
-    if (newQuestion.trim()) {
-      setQuestions((prev) => [...prev, newQuestion.trim()]);
-      setNewQuestion("");
-      // TODO: Send to backend when wired up
-    }
-  };
+  type SaveStatus = "idle" | "saving" | "success" | "error";
+  const [dateSaveStatus, setDateSaveStatus] = useState<SaveStatus>("idle");
+  const [dateSaveError, setSaveDateError] = useState<string | null>(null);
+  const [newQSaveStatus, setNewQSaveStatus] = useState<SaveStatus>("idle");
+  const [newQSaveError, setSaveNewQError] = useState<string | null>(null);
+  const [editQSaveStatus, setEditQSaveStatus] = useState<SaveStatus>("idle");
+  const [editSaveQError, setSaveEditQError] = useState<string | null>(null);
+  const [deleteQStatus, setDeleteQStatus] = useState<SaveStatus>("idle");
+  
 
   const handleSaveDates = () => {
     if (!openDate || !closeDate) return;
 
     const TZ = "America/New_York";
-    setSaveStatus("saving");
-    setSaveError(null);
+    setDateSaveStatus("saving");
+    setSaveDateError(null);
 
     startTransition(async () => {
       const openIso = fromZonedTime(`${openDate} 00:00:00`, TZ).toISOString();
       const closeIso = fromZonedTime(`${closeDate} 00:00:00`, TZ).toISOString();
 
       const res = await setWindow({ open: openIso, close: closeIso });
-
       if (!res.ok) {
-        setSaveStatus("error");
-        setSaveError(res.error ?? "Unknown error");
+        setDateSaveStatus("error");
+        setSaveDateError(res.error ?? "Unknown error");
         return;
       }
-
-      setSaveStatus("success");
-      setTimeout(() => setSaveStatus("idle"), 3000);
+      setDateSaveStatus("success");
+      setTimeout(() => setSaveDateError("idle"), 3000);
     });
+  };
+
+  const handleAddQuestion = () => {
+    if (newQuestion.trim()) {
+      setNewQSaveStatus("saving");
+      startTransition(async () => {
+        const res = await addQuestion(newQuestion);
+        if (!res.ok) {
+          setNewQSaveStatus("error");
+          setSaveNewQError(res.error ?? "Unknown error");
+          return;
+        }
+        const qid = res.data.questionid;
+        setQuestionData((prev) => [...prev, {id: qid, text : newQuestion.trim()}]);
+        setNewQuestion("");
+        setNewQSaveStatus("success");
+        setTimeout(() => setNewQSaveStatus("idle"), 3000);
+      })
+    }
   };
 
   const handleDeleteQuestion = (index: number) => {
@@ -157,21 +178,21 @@ const q = [
               </div>
               <Button
                 onClick={handleSaveDates}
-                disabled={!openDate || !closeDate || saveStatus === "saving"}
+                disabled={!openDate || !closeDate || dateSaveStatus === "saving"}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Calendar className="w-4 h-4 mr-2" />
-                {saveStatus === "saving" ? "Saving..." : "Save Opening Period"}
+                {dateSaveStatus === "saving" ? "Saving..." : "Save Opening Period"}
               </Button>
 
-              {saveStatus === "success" && (
+              {dateSaveStatus === "success" && (
                 <p className="text-sm text-green-700 mt-2">
                   Opening period saved successfully.
                 </p>
               )}
-              {saveStatus === "error" && (
+              {dateSaveStatus === "error" && (
                 <p className="text-sm text-red-700 mt-2">
-                  Failed to save opening period: {saveError}
+                  Failed to save opening period: {dateSaveError}
                 </p>
               )}
             </CardContent>
@@ -217,14 +238,14 @@ const q = [
               )}
 
               {/* Display Added Questions */}
-              {questions.length > 0 && (
+              {question_data.length > 0 && (
                 <div className="mt-6">
                   <h3 className="text-sm font-medium text-gray-700 mb-3">
-                    Added Questions ({questions.length})
+                    Added Questions ({question_data.length})
                   </h3>
 
                   <div className="space-y-2">
-                    {questions.map((q, index) => (
+                    {question_data.map((q, index) => (
                       <div
                         key={index}
                         className="flex items-start justify-between gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
@@ -239,7 +260,7 @@ const q = [
                             />
                           </div>
                         ) : (
-                          <p className="text-sm text-gray-800 flex-1">{q}</p>
+                          <p className="text-sm text-gray-800 flex-1">{q.text}</p>
                         )}
 
                         <div className="shrink-0 flex items-center gap-2">
@@ -294,3 +315,4 @@ const q = [
     </div>
   );
 }
+

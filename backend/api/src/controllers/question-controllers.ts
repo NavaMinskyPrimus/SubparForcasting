@@ -48,6 +48,7 @@ export async function handleGetQuestionByYear(req:Request, res: Response){
 
 export async function handlePostQuestion(req: Request, res: Response){
     try { // should need admin status
+        console.log("handlePostQuestion called")
         if (!req.body ){
             console.error("handlePostQuestion: body is undefined")
             return res.status(400).json({err: "body is undefined"});
