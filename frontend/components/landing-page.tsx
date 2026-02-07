@@ -2,11 +2,10 @@
 
 import { Button } from '@/components/ui/button';
 import { LogIn } from 'lucide-react';
-import { CURRENT_YEAR } from '@/lib/constants';
+import { CURRENT_DATE, CURRENT_YEAR } from '@/lib/constants';
 import { loginWithGoogle } from '@/lib/authInteractions';
 
 export function LandingPage() {
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
       {/* Header */}
@@ -33,7 +32,7 @@ export function LandingPage() {
             {/* Welcome Text */}
             <div className="text-center space-y-4 max-w-3xl">
               <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#228B22] via-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Welcome to Subparforecasting {CURRENT_YEAR}
+                Welcome to Subparforecasting
               </h2>
               <p className="text-xl text-slate-600">
                 The annual game where we try (and fail) to be superforecasters

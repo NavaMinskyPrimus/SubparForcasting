@@ -1,16 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { startTransition, useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Header } from "@/components/header";
 import { Plus, Calendar, Edit2, Save, X } from "lucide-react";
 import { CURRENT_YEAR } from "@/lib/constants";
+import { setWindow } from "@/lib/settingsActions";
+import { fromZonedTime } from "date-fns-tz";
 
-// Mock questions for 2027
-const INITIAL_QUESTIONS_2027 = [
+
+export function AdminPage({ initialQuestions }: { initialQuestions: string[] }) {
+  const router = useRouter();
+const q = [
   "Will the global average temperature increase by more than 0.2°C?",
   "Will a major AI company announce AGI capabilities?",
   "Will Bitcoin exceed $100,000?",
@@ -20,16 +23,17 @@ const INITIAL_QUESTIONS_2027 = [
   "Will a major tech company have a CEO change?",
   "Will the S&P 500 be higher than at the start of the year?",
 ];
-
-export function AdminPage() {
-  const router = useRouter();
-
-  const [questions, setQuestions] = useState<string[]>(INITIAL_QUESTIONS_2027);
+  const [questions, setQuestions] = useState<string[]>(q);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingText, setEditingText] = useState("");
   const [newQuestion, setNewQuestion] = useState("");
   const [openDate, setOpenDate] = useState("");
   const [closeDate, setCloseDate] = useState("");
+  const [saveStatus, setSaveStatus] = useState<
+    "idle" | "saving" | "success" | "error"
+  >("idle");
+
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const handleAddQuestion = () => {
     if (newQuestion.trim()) {
@@ -40,10 +44,27 @@ export function AdminPage() {
   };
 
   const handleSaveDates = () => {
-    if (openDate && closeDate) {
-      // TODO: Send to backend when wired up
-      alert(`Questions will be open from ${openDate} to ${closeDate}`);
-    }
+    if (!openDate || !closeDate) return;
+
+    const TZ = "America/New_York";
+    setSaveStatus("saving");
+    setSaveError(null);
+
+    startTransition(async () => {
+      const openIso = fromZonedTime(`${openDate} 00:00:00`, TZ).toISOString();
+      const closeIso = fromZonedTime(`${closeDate} 00:00:00`, TZ).toISOString();
+
+      const res = await setWindow({ open: openIso, close: closeIso });
+
+      if (!res.ok) {
+        setSaveStatus("error");
+        setSaveError(res.error ?? "Unknown error");
+        return;
+      }
+
+      setSaveStatus("success");
+      setTimeout(() => setSaveStatus("idle"), 3000);
+    });
   };
 
   const handleDeleteQuestion = (index: number) => {
@@ -134,38 +155,25 @@ export function AdminPage() {
                   />
                 </div>
               </div>
-
-              {openDate && closeDate && (
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <p className="text-sm text-blue-800">
-                    Questions will be open from{" "}
-                    <strong>
-                      {new Date(openDate).toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </strong>{" "}
-                    to{" "}
-                    <strong>
-                      {new Date(closeDate).toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </strong>
-                  </p>
-                </div>
-              )}
-
               <Button
                 onClick={handleSaveDates}
-                disabled={!openDate || !closeDate}
+                disabled={!openDate || !closeDate || saveStatus === "saving"}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Calendar className="w-4 h-4 mr-2" />
-                Save Opening Period
+                {saveStatus === "saving" ? "Saving..." : "Save Opening Period"}
               </Button>
+
+              {saveStatus === "success" && (
+                <p className="text-sm text-green-700 mt-2">
+                  Opening period saved successfully.
+                </p>
+              )}
+              {saveStatus === "error" && (
+                <p className="text-sm text-red-700 mt-2">
+                  Failed to save opening period: {saveError}
+                </p>
+              )}
             </CardContent>
           </Card>
 

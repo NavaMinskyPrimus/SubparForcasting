@@ -5,12 +5,22 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Header } from '@/components/header';
 import { Target, BookOpen, TrendingUp } from 'lucide-react';
-import { CURRENT_YEAR, GAME_YEAR_NUMBER } from '@/lib/constants';
+import { CURRENT_DATE, CURRENT_YEAR, GAME_YEAR_NUMBER } from '@/lib/constants';
 import { Timestamp } from 'next/dist/server/lib/cache-handlers/types';
 
-export function HomePage({ isAdmin,questionsAreOpen, dueDate}: { isAdmin: boolean, questionsAreOpen: boolean, dueDate: String}) {
+export function HomePage({ isAdmin,open, close}: { isAdmin: boolean, open: Date, close: Date}) {
   const router = useRouter();
-
+  const questionsAreOpen=(open <= CURRENT_DATE) && (CURRENT_DATE < close);
+  const dueDate = close.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+  const startLabel = (close > CURRENT_DATE) ? new Date(open).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  }) : CURRENT_YEAR+1;
+  const nextGame = (close > CURRENT_DATE) ? close.getFullYear() : CURRENT_YEAR+1;
   // TODO: Replace with actual logic to check if questions are open
   // This should check against the opening/closing dates set in admin
 
@@ -24,7 +34,7 @@ export function HomePage({ isAdmin,questionsAreOpen, dueDate}: { isAdmin: boolea
             <div className="absolute inset-0 bg-gradient-to-r from-green-100 via-blue-100 to-purple-100 rounded-3xl opacity-60"></div>
             <div className="relative">
               <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-black to-black bg-clip-text text-transparent mb-4">
-                Welcome to Subparforecasting, {CURRENT_YEAR}!
+                Welcome to Subparforecasting, {nextGame}!
               </h1>
               {questionsAreOpen ? (
                 <p className="text-xl text-slate-700 font-medium">
@@ -32,7 +42,7 @@ export function HomePage({ isAdmin,questionsAreOpen, dueDate}: { isAdmin: boolea
                 </p>
               ) : (
                 <p className="text-xl text-slate-700 font-medium">
-                  Our next game will start in January {CURRENT_YEAR + 1}
+                  Our next game will start in {startLabel}
                 </p>
               )}
             </div>

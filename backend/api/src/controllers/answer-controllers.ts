@@ -11,11 +11,11 @@ export async function handleGetAnswersByUID(req: Request, res: Response) {
         }
         const uid = Number(rawUid);
         if (!Number.isInteger(uid) || uid <= 0) {
-            return res.status(400).json({ error: "userid must be a positive integer" });
+            return res.status(400).json({ err: "userid must be a positive integer" });
         }
         const user = await getUserByID(uid);
         if(user == null){
-            return res.status(404).json({ error: "userid does not correspond to user"});
+            return res.status(404).json({ err: "userid does not correspond to user"});
         }
         const answers = await getAnswersByUID(uid);
         res.status(200).json(answers);
@@ -33,13 +33,13 @@ export async function handlePostAnswer(req: Request, res: Response) {
         }
         if (!req.auth?.sub) {
             console.error("handlePostAnswer: Authentication required")
-            return res.status(401).json({ error: 'Authentication required' });
+            return res.status(401).json({ err: 'Authentication required' });
         }
         const sub = req.auth.sub;
         const currentUser = await getUserBySub(sub);
         if(!currentUser){
             console.error("handlePostAnswer: Current user not found")
-            return res.status(404).json({ error: 'current user not found' });
+            return res.status(404).json({ err: 'current user not found' });
         }
         const uid = currentUser.userid;
         const qid = req.body?.questionid;
@@ -47,25 +47,25 @@ export async function handlePostAnswer(req: Request, res: Response) {
         if (qid === undefined || prob === undefined) {
             console.error("handlePostAnswer: questionid and probability are require")
             return res.status(400).json({
-                error: "questionid and probability are required",
+                err: "questionid and probability are required",
             });
         }
         if (typeof qid !== "number" || typeof prob !== "number"){
             console.error("handlePostAnswer: questionid and probability must be numbers")
             return res.status(400).json({
-                error: "questionid and probability must be numbers",
+                err: "questionid and probability must be numbers",
             });
         }
         if(prob < 0 || prob > 100){
             console.error("handlePostAnswer: probability must be between 0 and 100")
             return res.status(400).json({
-                error: "probability must be between 0 and 100",
+                err: "probability must be between 0 and 100",
             });
         }
         const question = await getQuestion(qid);
         if(question == null){
             return res.status(404).json({
-                error: "No question associated with given question",
+                err: "No question associated with given question",
             });
         }
         const answers = await postAnswer(uid, qid, prob);
@@ -84,31 +84,31 @@ export async function handleDeleteAnswer(req: Request, res: Response){
         }
 
         if (!req.auth?.sub) {
-            return res.status(401).json({ error: 'Authentication required' });
+            return res.status(401).json({ err: 'Authentication required' });
         }
         const sub = req.auth.sub;
         const currentUser = await getUserBySub(sub);
         if(!currentUser){
-            return res.status(404).json({ error: 'current user not found' });
+            return res.status(404).json({ err: 'current user not found' });
         }
         const uid = req.body?.userid;
         const qid = req.body?.questionid;
         if (uid === undefined || qid === undefined) {
             return res.status(400).json({
-                error: "userid and questionid are required",
+                err: "userid and questionid are required",
             });
         }
         if (typeof uid !== "number" || typeof qid !== "number" || uid < 0 || qid < 0){
             return res.status(400).json({
-                error: "userid and questionid must be positive numbers",
+                err: "userid and questionid must be positive numbers",
             });
         }
         if(currentUser.permission != "admin" && uid != currentUser.uid){
-            return res.status(403).json({ error: "Only admins can delete other poeple's answers"});
+            return res.status(403).json({ err: "Only admins can delete other poeple's answers"});
         }
         const answers = await deleteAnswer(uid, qid);
         if(answers == null){
-            return res.status(404).json({ error: "answer not found"})
+            return res.status(404).json({ err: "answer not found"})
         }
         res.status(200).json(answers);
     }catch(err){

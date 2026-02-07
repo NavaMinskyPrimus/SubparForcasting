@@ -6,7 +6,7 @@ export async function handleGetUsers(req: Request, res: Response) {
     try{
         const users = await getUsers();
         if (!users) {
-        return res.status(404).json({ error: 'User not found' });
+        return res.status(404).json({ err: 'User not found' });
         }
         res.json(users);
     }catch (err) {
@@ -19,36 +19,36 @@ export async function  handleGetUserByID(req: Request, res: Response) {
     const id = req.params.id;
     const numericId = parseInt(id, 10);
     if (Number.isNaN(numericId) || numericId < 0) {
-      return res.status(400).json({ error: 'Invalid user id' });
+      return res.status(400).json({ err: 'Invalid user id' });
     }
     const user = await getUserByID(numericId);
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ err: 'User not found' });
     }
     res.json(user);
   } catch (err) {
     console.error('Error fetching user by id', err);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ err: "Internal server error" });
   }
 }
 
 export async function  handleGetCurrentUser(req: Request, res: Response) {
     try {
         if (!req.auth) {
-            return res.status(401).json({ error: 'Not authenticated' });
+            return res.status(401).json({ err: 'Not authenticated' });
         }
         const sub = req.auth.sub;
         if (!sub) {
-        return res.status(400).json({ error: 'No sub on authenticated user' });
+        return res.status(400).json({ err: 'No sub on authenticated user' });
         }
         const user = await getUserBySub(sub);
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ err: 'User not found' });
         }
         return res.json(user);
   } catch (err) {
     console.error('Error fetching current user', err);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ err: 'Internal server error' });
   }
 }
 
@@ -71,16 +71,16 @@ export async function handlePostUser(req: Request, res: Response) {
         }
         const id : number = req.body.userid;
         if (!req.auth?.sub) {
-            return res.status(401).json({ error: 'Authentication required' });
+            return res.status(401).json({ err: 'Authentication required' });
         }
         const current_sub = req.auth.sub;
         const currentUser = await getUserBySub(current_sub);
         if(!currentUser){
             console.error("handlePostUser: user not found")
-            return res.status(404).json({ error: 'current user not found' });
+            return res.status(404).json({ err: 'current user not found' });
         }
         if(currentUser.permission != "admin"){
-            return res.status(403).json({error: 'only admins can post users'})
+            return res.status(403).json({err: 'only admins can post users'})
         }
         const newUser = await postUser(name, email, permission,sub);
         res.status(200).json(newUser);
@@ -98,24 +98,24 @@ export async function handleDeleteUser(req: Request, res: Response) {
         }
         const id : number = req.body.userid;
         if (!req.auth?.sub) {
-            return res.status(401).json({ error: 'Authentication required' });
+            return res.status(401).json({ err: 'Authentication required' });
         }
         const sub = req.auth.sub;
         console.log(sub);
         const currentUser = await getUserBySub(sub);
         if(!currentUser){
-            return res.status(404).json({ error: 'current user not found' });
+            return res.status(404).json({ err: 'current user not found' });
         }
         const existingUser = await getUserByID(id);
         if(!existingUser){
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ err: 'User not found' });
         }
         if((existingUser.userid != currentUser.userid) && (currentUser.permission != "admin")){
-            return res.status(403).json({ error: 'Only admins can delete other users' });
+            return res.status(403).json({ err: 'Only admins can delete other users' });
         }
         const removed = await deleteUserWithAssociatedAnswers(id);
         if(removed == null){
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ err: 'User not found' });
         }
         res.status(200).json(removed);
 

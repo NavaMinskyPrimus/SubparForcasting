@@ -18,6 +18,7 @@ import {
 import katex from "katex";
 import "katex/dist/katex.min.css";
 import { useEffect, useRef } from "react";
+import { CURRENT_DATE } from "@/lib/constants";
 
 function KatexBlock({ tex }: { tex: string }) {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -35,7 +36,13 @@ function KatexBlock({ tex }: { tex: string }) {
   return <div ref={ref} />;
 }
 
-export function InstructionsPage({ isAdmin, isOpen, dueDate}: { isAdmin: boolean, isOpen: boolean ,dueDate: String}) {
+export function InstructionsPage({ isAdmin, open, close}: { isAdmin: boolean, open: Date ,close: Date}) {
+  const isOpen = (open <= CURRENT_DATE) && (CURRENT_DATE < close);
+  const dueDate = close.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
   const router = useRouter();
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">

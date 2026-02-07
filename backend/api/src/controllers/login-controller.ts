@@ -5,7 +5,7 @@ export async function handleLogin(req: Request, res: Response) {
     try{
         const sub = req.body.sub
         if (!sub) {
-            return res.status(400).json({ error: 'No sub on authenticated user' });
+            return res.status(400).json({ err: 'No sub on authenticated user' });
         }
         const user = await getUserBySub(sub);
         if(user != null){
@@ -15,7 +15,7 @@ export async function handleLogin(req: Request, res: Response) {
         const name = req.body?.name;
         const email = req.body?.email;
         if(name == null || email == null || name == undefined || email == undefined){
-            return res.status(400).json({error: "name and email are requiered"});
+            return res.status(400).json({err: "name and email are requiered"});
         }
         console.log("returning new user");
 
