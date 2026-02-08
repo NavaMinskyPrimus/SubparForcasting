@@ -6,32 +6,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Header } from "@/components/header";
 import { Plus, Calendar, Edit2, Save, X } from "lucide-react";
-import { CURRENT_YEAR } from "@/lib/constants";
+import { CURRENT_DATE, CURRENT_YEAR } from "@/lib/constants";
 import { setWindow } from "@/lib/settingsActions";
 import { fromZonedTime } from "date-fns-tz";
-import { addQuestion } from "@/lib/questionsActions";
+import { addQuestion, deleteQuestion, editQuestion } from "@/lib/questionsActions";
 
 type Question = {
   id: number;
   text: string;
 };
-export function AdminPage({ rows }: { rows: any[] }) {
+export function AdminPage({ rows, isAdmin, nextGame}: { rows: any[], isAdmin: boolean, nextGame : number}) {
   const data: Question[] = rows.map(
   (val => ({id: val.questionid, text: val.text}))
   );
-const q = [
-  "Will the global average temperature increase by more than 0.2°C?",
-  "Will a major AI company announce AGI capabilities?",
-  "Will Bitcoin exceed $100,000?",
-  "Will there be a crewed mission to Mars?",
-  "Will a new pandemic emerge?",
-  "Will electric vehicles make up more than 30% of new car sales globally?",
-  "Will a major tech company have a CEO change?",
-  "Will the S&P 500 be higher than at the start of the year?",
-];
+
   const router = useRouter();
   const [question_data, setQuestionData] = useState<Question[]>(data);
-  const [questions, setQuestions] = useState<string[]>(q);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingText, setEditingText] = useState("");
   const [newQuestion, setNewQuestion] = useState("");
@@ -40,12 +30,13 @@ const q = [
   type SaveStatus = "idle" | "saving" | "success" | "error";
   const [dateSaveStatus, setDateSaveStatus] = useState<SaveStatus>("idle");
   const [dateSaveError, setSaveDateError] = useState<string | null>(null);
-  const [newQSaveStatus, setNewQSaveStatus] = useState<SaveStatus>("idle");
-  const [newQSaveError, setSaveNewQError] = useState<string | null>(null);
-  const [editQSaveStatus, setEditQSaveStatus] = useState<SaveStatus>("idle");
-  const [editSaveQError, setSaveEditQError] = useState<string | null>(null);
+  const [newQStatus, setNewQStatus] = useState<SaveStatus>("idle");
+  const [newQError, setNewQError] = useState<string | null>(null);
+  const [editQStatus, setEditQStatus] = useState<SaveStatus>("idle");
+  const [editQError, setEditQError] = useState<string | null>(null);
   const [deleteQStatus, setDeleteQStatus] = useState<SaveStatus>("idle");
-  
+  const [deleteQError, setDeleteQError] = useState<string | null>(null);
+
 
   const handleSaveDates = () => {
     if (!openDate || !closeDate) return;
@@ -71,25 +62,36 @@ const q = [
 
   const handleAddQuestion = () => {
     if (newQuestion.trim()) {
-      setNewQSaveStatus("saving");
+      setNewQStatus("saving");
       startTransition(async () => {
         const res = await addQuestion(newQuestion);
         if (!res.ok) {
-          setNewQSaveStatus("error");
-          setSaveNewQError(res.error ?? "Unknown error");
+          setNewQStatus("error");
+          setNewQError(res.error ?? "Unknown error");
           return;
         }
         const qid = res.data.questionid;
         setQuestionData((prev) => [...prev, {id: qid, text : newQuestion.trim()}]);
         setNewQuestion("");
-        setNewQSaveStatus("success");
-        setTimeout(() => setNewQSaveStatus("idle"), 3000);
+        setNewQStatus("success");
+        setTimeout(() => setNewQStatus("idle"), 3000);
       })
     }
   };
 
   const handleDeleteQuestion = (index: number) => {
-    setQuestions((prev) => prev.filter((_, i) => i !== index));
+    setDeleteQStatus("saving");
+    startTransition(async () => {
+      const data = question_data[index];
+      const qid = data.id
+      const res = await deleteQuestion(qid)
+      if(! res.ok){
+        setDeleteQStatus("error")
+        setDeleteQError(res.error)
+      }
+      setQuestionData((prev) => prev.filter((_, i) => i !== index));
+      setDeleteQStatus("success");
+    })
     if (editingIndex === index) {
       setEditingIndex(null);
       setEditingText("");
@@ -98,18 +100,28 @@ const q = [
 
   const handleEditQuestion = (index: number) => {
     setEditingIndex(index);
-    setEditingText(questions[index] ?? "");
+    setEditingText(question_data[index].text ?? "");
   };
 
   const handleSaveEdit = () => {
     if (editingText.trim() && editingIndex !== null) {
-      setQuestions((prev) =>
-        prev.map((q, i) => (i === editingIndex ? editingText.trim() : q))
-      );
-      setEditingIndex(null);
-      setEditingText("");
-      // TODO: Send to backend when wired up
+      setEditQStatus("saving");
+      startTransition(async () => {
+        const data = question_data[editingIndex];
+        const res = await editQuestion(data.id, editingText.trim());
+        if(!res.ok){
+          setEditQStatus("error")
+          setEditQError(res.error)
+        }
+        const newQuestion = {id: data.id, text:editingText.trim()}
+        setQuestionData((prev) =>
+          prev.map((q, i) => (i === editingIndex ? newQuestion : q))
+        );
+      })
+      setEditQStatus("success");
     }
+    setEditingIndex(null);
+    setEditingText("");
   };
 
   const handleCancelEdit = () => {
@@ -119,13 +131,13 @@ const q = [
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#228B22] via-blue-600 to-purple-600">
-      <Header isAdmin={true} />
+      <Header isAdmin={isAdmin} />
 
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">Admin Panel</h1>
           <p className="text-white/90">
-            Manage questions and settings for {CURRENT_YEAR + 1}
+            Manage questions and settings for {nextGame}
           </p>
         </div>
 
@@ -221,7 +233,7 @@ const q = [
                       id="question"
                       value={newQuestion}
                       onChange={(e) => setNewQuestion(e.target.value)}
-                      placeholder="Will the average temperature in New York exceed 75°F in July?"
+                      placeholder="By adding a question, I hereby acknowledge Nava's status as the most best-est Minsky-Primus"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#228B22] focus:border-transparent resize-none"
                       rows={3}
                     />
@@ -260,7 +272,9 @@ const q = [
                             />
                           </div>
                         ) : (
-                          <p className="text-sm text-gray-800 flex-1">{q.text}</p>
+                         <p className="text-sm text-gray-800 flex-1 whitespace-pre-wrap">
+                            {q.text}
+                          </p>
                         )}
 
                         <div className="shrink-0 flex items-center gap-2">

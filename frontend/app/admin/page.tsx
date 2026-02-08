@@ -29,5 +29,5 @@ export default async function Page() {
     throw new Error(response.error);
   }
   const questions = response.data
-  return <AdminPage rows={questions} />;
+  return <AdminPage rows={questions} isAdmin={isa} nextGame={year} />;
 }
