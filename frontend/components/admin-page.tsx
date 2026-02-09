@@ -56,7 +56,7 @@ export function AdminPage({ rows, isAdmin, nextGame}: { rows: any[], isAdmin: bo
         return;
       }
       setDateSaveStatus("success");
-      setTimeout(() => setSaveDateError("idle"), 3000);
+      setTimeout(() => setSaveDateError("idle"), 1000);
     });
   };
 
@@ -74,7 +74,7 @@ export function AdminPage({ rows, isAdmin, nextGame}: { rows: any[], isAdmin: bo
         setQuestionData((prev) => [...prev, {id: qid, text : newQuestion.trim()}]);
         setNewQuestion("");
         setNewQStatus("success");
-        setTimeout(() => setNewQStatus("idle"), 3000);
+        setTimeout(() => setNewQStatus("idle"), 1000);
       })
     }
   };
@@ -88,9 +88,12 @@ export function AdminPage({ rows, isAdmin, nextGame}: { rows: any[], isAdmin: bo
       if(! res.ok){
         setDeleteQStatus("error")
         setDeleteQError(res.error)
+        return;
       }
       setQuestionData((prev) => prev.filter((_, i) => i !== index));
       setDeleteQStatus("success");
+      setTimeout(() => setDeleteQStatus("idle"), 1000);
+
     })
     if (editingIndex === index) {
       setEditingIndex(null);
@@ -112,13 +115,16 @@ export function AdminPage({ rows, isAdmin, nextGame}: { rows: any[], isAdmin: bo
         if(!res.ok){
           setEditQStatus("error")
           setEditQError(res.error)
+          return;
         }
         const newQuestion = {id: data.id, text:editingText.trim()}
         setQuestionData((prev) =>
           prev.map((q, i) => (i === editingIndex ? newQuestion : q))
         );
+        setTimeout(() => setEditQStatus("idle"), 1000);
       })
       setEditQStatus("success");
+      setTimeout(() => setDeleteQStatus("idle"), 1000);
     }
     setEditingIndex(null);
     setEditingText("");
@@ -246,6 +252,17 @@ export function AdminPage({ rows, isAdmin, nextGame}: { rows: any[], isAdmin: bo
                     <Plus className="w-4 h-4 mr-2" />
                     Add Question
                   </Button>
+
+                  {newQStatus === "success" && (
+                    <p className="text-sm text-green-700 mt-2">
+                      Question added successfully.
+                    </p>
+                  )}
+                  {newQStatus === "error" && (
+                    <p className="text-sm text-red-700 mt-2">
+                      Failed to add question: {newQError}
+                    </p>
+                  )}
                 </>
               )}
 
@@ -253,9 +270,8 @@ export function AdminPage({ rows, isAdmin, nextGame}: { rows: any[], isAdmin: bo
               {question_data.length > 0 && (
                 <div className="mt-6">
                   <h3 className="text-sm font-medium text-gray-700 mb-3">
-                    Added Questions ({question_data.length})
+                    Questions ({question_data.length})
                   </h3>
-
                   <div className="space-y-2">
                     {question_data.map((q, index) => (
                       <div
@@ -315,13 +331,37 @@ export function AdminPage({ rows, isAdmin, nextGame}: { rows: any[], isAdmin: bo
                                 Delete
                               </Button>
                             </>
+              
                           )}
                         </div>
+                        
                       </div>
+                              
                     ))}
+                    
                   </div>
                 </div>
               )}
+                {editQStatus === "success" && (
+                    <p className="text-sm text-green-700 mt-2">
+                      Question edited successfully
+                    </p>
+                  )}
+                  {editQStatus === "error" && (
+                    <p className="text-sm text-red-700 mt-2">
+                      Failed to edit question: {newQError}
+                    </p>
+                  )}
+                  {deleteQStatus === "success" && (
+                    <p className="text-sm text-green-700 mt-2">
+                      Question deleted successfully
+                    </p>
+                  )}
+                  {deleteQStatus === "error" && (
+                    <p className="text-sm text-red-700 mt-2">
+                      Failed to delete question: {newQError}
+                    </p>
+                  )}
             </CardContent>
           </Card>
         </div>
