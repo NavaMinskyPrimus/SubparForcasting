@@ -12,12 +12,20 @@ describe('Questions API Integration Tests', () => {
                 .expect(200);
             expect(response.body.text).toBe("Will my dog eat food tomorow")
         })
-        it('should get question given id', async () => {
+        it('should get question year', async () => {
             const response = await request(app)
                 .get('/api/questions/year')
                 .query({year: 2010})
                 .expect(200);
             expect(response.body[0].text).toBe("What are the chances i EAT YOU")
+        })
+        it('should get questions with answers', async () =>{
+            const response = await request(app)
+                .get('/api/questions/with-answers')
+                .set("x-test-sub", "sub2")
+                .query({year: 2010})
+                .expect(200);
+            expect(response.body[0].probability).toBe(5)
         })
     })
     describe('post, put, delete tests', () => {
