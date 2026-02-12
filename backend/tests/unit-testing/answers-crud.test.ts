@@ -2,7 +2,7 @@ require('dotenv').config();
 import { pool } from './../../database/pool';
 import { describe } from 'node:test';
 import { deleteUserWithAssociatedAnswers, getUserByID, postUser } from '../../database/user-queries';
-import { deleteAnswersByUID, deleteAnswer, getAnswersByUID, postAnswer, getAnswersByQID} from '../../database/answer-queries';
+import { deleteAnswersByUID, deleteAnswer, getAnswersByUID, postAnswer, getAnswersByQID, postAnswers, checkAnswer} from '../../database/answer-queries';
 
 afterAll(async () => {
   await pool.end();
@@ -52,6 +52,31 @@ describe('Database CRUD tests for user queries', () => {
             const questionids = answers.map((answer: any) => answer.questionid);
             expect(questionids).not.toContain(2);
         });
+        let returnedanswers = []
+        it('should add multiple answers', async() =>{
+            const answers = [
+            { userid: 2, questionid: 2, probability: 49 },
+            { userid: 1, questionid: 1, probability: 50 },
+            ];
+            const added = await postAnswers(answers);
+            expect(added.length).toBe(2);
+            const answer1 = added.find(a => a.userid === 2 && a.questionid === 2);
+            const answer2 = added.find(a => a.userid === 1 && a.questionid === 1);
+            expect(answer1).toBeDefined();
+            expect(answer2).toBeDefined();
+            const check1 = await checkAnswer(2,2);
+            expect(check1).toBeDefined()
+            expect(check1).not.toBe(null)
+            expect(check1.probability).toBe(49)
+            const check2 = await checkAnswer(1,1);
+            expect(check2).toBeDefined()
+            expect(check2.probability).toBe(50)
+        });
+        it('should reset data', async () => {
+            const removed = await deleteAnswer(2,2);
+            const added = await postAnswers([{ userid: 1, questionid: 1, probability: 10 }]);
+
+        })
     });
     describe('deleteAnswersByUID tests', () => {
         let uid: number;

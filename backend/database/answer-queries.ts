@@ -41,3 +41,37 @@ export async function checkAnswer(userid: number, questionid: number){
   const res = await pool.query('SELECT * FROM public."answers" WHERE userid = $1 AND questionid = $2;', [userid, questionid]);
   return res.rows[0] ?? null;
 }
+export type Answer = {
+  userid: number;
+  questionid: number;
+  probability: number;
+};
+
+export async function postAnswers(answers: {userid: number; questionid: number;probability: number;}[]) :  Promise<Answer[]>{
+  if (answers.length === 0){
+    return [];
+  }
+  const values: number[] = [];
+  const text: string[] = [];
+
+  answers.forEach((a, index) => {
+    const baseIndex = index * 3;
+    text.push(
+      `($${baseIndex + 1}, $${baseIndex + 2}, $${baseIndex + 3})`
+    );
+
+    values.push(a.userid, a.questionid, a.probability);
+  });
+
+  const query = `
+    INSERT INTO public."answers" (userid, questionid, probability)
+    VALUES ${text.join(", ")}
+    ON CONFLICT (userid, questionid)
+    DO UPDATE SET
+      probability = EXCLUDED.probability
+    RETURNING *;
+  `;
+
+  const res = await pool.query(query, values);
+  return res.rows;
+}

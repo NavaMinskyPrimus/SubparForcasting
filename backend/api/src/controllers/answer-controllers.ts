@@ -115,6 +115,8 @@ export async function handleDeleteAnswer(req: Request, res: Response){
         console.error("Failed to delete answer", err);
         res.status(500).json({ err: "Failed to get answers" });
     }
-
 }
 
+export async function handlePostAnswers(req: Request, res: Response){
+    
+}
