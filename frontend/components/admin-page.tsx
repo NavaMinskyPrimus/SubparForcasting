@@ -15,7 +15,7 @@ type Question = {
   id: number;
   text: string;
 };
-export function AdminPage({ rows, isAdmin, nextGame}: { rows: any[], isAdmin: boolean, nextGame : number}) {
+export function AdminPage({ rows, isAdmin, nextGame, playing}: { rows: any[], isAdmin: boolean, nextGame : number, playing:boolean}) {
   const data: Question[] = rows.map(
   (val => ({id: val.questionid, text: val.text}))
   );
@@ -137,7 +137,7 @@ export function AdminPage({ rows, isAdmin, nextGame}: { rows: any[], isAdmin: bo
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#228B22] via-blue-600 to-purple-600">
-      <Header isAdmin={isAdmin} />
+      <Header isAdmin={isAdmin} playing={playing}/>
 
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="text-center mb-8">

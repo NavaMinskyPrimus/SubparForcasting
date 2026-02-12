@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Header } from '@/components/header';
 import { toast } from 'sonner';
+import { CURRENT_YEAR } from '@/lib/constants';
 
 // Mock questions data
 const MOCK_QUESTIONS = [
@@ -59,7 +60,7 @@ interface Answer {
   inputValue?: string;
 }
 
-export function QuestionsPage() {
+export function QuestionsPage({rows, isAdmin}: {rows: any[], isAdmin: boolean}) {
   const [answers, setAnswers] = useState<Answer[]>(
     MOCK_QUESTIONS.map(q => ({ questionId: q.id, probability: 50, inputValue: '50' }))
   );
@@ -84,7 +85,7 @@ export function QuestionsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-      <Header isAdmin={true} />
+      <Header isAdmin={isAdmin} playing={true}/>
       <div className="p-4 md:p-8">
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="flex items-center justify-end">
@@ -95,7 +96,7 @@ export function QuestionsPage() {
 
           <div className="text-center space-y-4">
             <h1 className="text-4xl md:text-5xl font-bold text-slate-900">
-              2026 Forecasting Questions
+              {CURRENT_YEAR} Forecasting Questions
             </h1>
           </div>
 

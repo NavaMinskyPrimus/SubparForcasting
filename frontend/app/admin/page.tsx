@@ -24,10 +24,11 @@ export default async function Page() {
   }else{
     year = close.getFullYear()+1
   }
+  const playing = (open <= CURRENT_DATE) && (CURRENT_DATE < close)
   const response = await getQuestions(year); 
   if(!response.ok){
     throw new Error(response.error);
   }
   const questions = response.data
-  return <AdminPage rows={questions} isAdmin={isa} nextGame={year} />;
+  return <AdminPage rows={questions} isAdmin={isa} nextGame={year} playing={playing}/>;
 }

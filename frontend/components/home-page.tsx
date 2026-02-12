@@ -26,7 +26,7 @@ export function HomePage({ isAdmin,open, close}: { isAdmin: boolean, open: Date,
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
-      <Header isAdmin={isAdmin} />
+      <Header isAdmin={isAdmin} playing={questionsAreOpen}/>
       <div className="p-8">
         <div className="max-w-5xl mx-auto space-y-10">
           {/* Welcome Banner */}
@@ -177,7 +177,7 @@ export function HomePage({ isAdmin,open, close}: { isAdmin: boolean, open: Date,
           </Card>
 
           {/* CTA Section */}
-          <div className="text-center py-8">
+          {questionsAreOpen && <div className="text-center py-8">
             <div className="bg-gradient-to-r from-[#228B22] via-blue-600 to-purple-600 rounded-2xl p-8 shadow-xl">
               <h3 className="text-3xl font-bold text-white mb-4">Ready to Make Your Predictions?</h3>
               <Button
@@ -191,7 +191,7 @@ export function HomePage({ isAdmin,open, close}: { isAdmin: boolean, open: Date,
                 Go forth and forecast!
               </Button>
             </div>
-          </div>
+          </div>}
         </div>
       </div>
     </div>

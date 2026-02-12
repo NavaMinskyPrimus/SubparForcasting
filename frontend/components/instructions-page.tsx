@@ -46,7 +46,7 @@ export function InstructionsPage({ isAdmin, open, close}: { isAdmin: boolean, op
   const router = useRouter();
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-      <Header isAdmin={isAdmin} />
+      <Header isAdmin={isAdmin} playing={isOpen} />
       <div className="p-4 md:p-8">
         <div className="max-w-5xl mx-auto space-y-8">
           {/* Hero Section */}

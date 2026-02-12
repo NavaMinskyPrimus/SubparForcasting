@@ -6,7 +6,7 @@ import { LogOut, Settings, Home, Target, BookOpen, TrendingUp } from 'lucide-rea
 import { CURRENT_YEAR } from '@/lib/constants';
 import { logout } from '@/lib/authInteractions';
 
-export function Header({ isAdmin }: { isAdmin: boolean }) {
+export function Header({ isAdmin , playing}: { isAdmin: boolean, playing: boolean }) {
   const router = useRouter();
   return (
     <div className="sticky top-0 z-50 bg-gradient-to-r from-[#228B22] via-blue-600 to-purple-600 text-white shadow-md">
@@ -36,7 +36,7 @@ export function Header({ isAdmin }: { isAdmin: boolean }) {
             Instructions
           </Button>
 
-          <Button
+          {playing&& <Button
             variant="ghost"
             size="sm"
             onClick={() => router.push('/questions')}
@@ -44,7 +44,7 @@ export function Header({ isAdmin }: { isAdmin: boolean }) {
           >
             <Target className="w-4 h-4" />
             Forecast!
-          </Button>
+          </Button>}
 
           <Button
             variant="ghost"
