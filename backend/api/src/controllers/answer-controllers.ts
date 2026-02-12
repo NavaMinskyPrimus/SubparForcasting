@@ -197,3 +197,4 @@ export async function handlePostAnswers(req: Request, res: Response){
         return res.status(400).json({err: 'probability must be between 0 and 100'})
     }
 }
+
