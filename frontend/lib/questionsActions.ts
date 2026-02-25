@@ -1,5 +1,4 @@
 "use server"
-import { auth } from "@/auth";
 import {authedFetch, type ActionResult} from "@/lib/actionUtils";
 
 
@@ -21,4 +20,9 @@ export async function addQuestion(text: string):Promise<ActionResult<any>>{
   const url = `${process.env.BACKEND_URL}/api/questions`;
   console.log("is this being called?")
   return authedFetch(url, {method: "POST", body: JSON.stringify({text: text})})
+}
+
+export async function getQuestionsWithAnswers(year: number): Promise<ActionResult<any>>{
+   const url = `${process.env.BACKEND_URL}/api/questions//with-answers?year=${encodeURIComponent(year)}`;
+  return authedFetch(url, {method: "GET"})
 }

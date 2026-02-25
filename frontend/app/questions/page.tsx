@@ -10,20 +10,21 @@ export default async function Page() {
   if(!isa){
     redirect("/home");
   }
-  const res = await getDates();
-  if (!res.ok) {
-    throw new Error(res.error);
+  const dates_res = await getDates();
+  if (!dates_res.ok) {
+    throw new Error(dates_res.error);
   }
-  const open = new Date(res.data.open);
-  const close = new Date(res.data.close);
+  const open = new Date(dates_res.data.open);
+  const close = new Date(dates_res.data.close);
   if (open > CURRENT_DATE || CURRENT_DATE >= close){
     redirect("/home");
   }
   const year = CURRENT_DATE.getFullYear()
-  const response = await getQuestions(year); 
-  if(!response.ok){
-    throw new Error(response.error);
+  const question_res = await getQuestions(year); 
+  if(!question_res.ok){
+    throw new Error(question_res.error);
   }
-  const rows = response.data
+  const rows = question_res.data
+
   return <QuestionsPage rows={rows} isAdmin={isa}/>;
 }

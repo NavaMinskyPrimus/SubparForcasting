@@ -49,8 +49,11 @@ export function HomePage({ isAdmin,open, close}: { isAdmin: boolean, open: Date,
           </div>
 
           {/* Action Cards */}
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Instructions - Left */}
+<div
+  className={`grid gap-6 ${
+    questionsAreOpen ? "md:grid-cols-3" : "md:grid-cols-2 md:justify-center"
+  }`}
+>            {/* Instructions - Left */}
             <Card className="border-2 border-green-200 shadow-lg">
               <CardContent className="pt-6 text-center space-y-4">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-green-600 to-green-600 shadow-md">
@@ -68,6 +71,7 @@ export function HomePage({ isAdmin,open, close}: { isAdmin: boolean, open: Date,
             </Card>
 
             {/* Questions - Middle */}
+            {questionsAreOpen &&
             <Card className="border-2 border-blue-200 shadow-lg">
               <CardContent className="pt-6 text-center space-y-4">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-blue-600 shadow-md">
@@ -85,7 +89,7 @@ export function HomePage({ isAdmin,open, close}: { isAdmin: boolean, open: Date,
                   Go to Questions →
                 </Button>
               </CardContent>
-            </Card>
+            </Card>}
 
             {/* Past Results - Right */}
             <Card className="border-2 border-purple-200 shadow-lg">
