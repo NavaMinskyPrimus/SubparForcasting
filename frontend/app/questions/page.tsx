@@ -1,6 +1,6 @@
 import { QuestionsPage } from "@/components/questions-page";
 import { checkAuth,isAdmin } from "@/lib/authInteractions";
-import { getQuestions } from "@/lib/questionsActions";
+import { getQuestions, getQuestionsWithAnswers } from "@/lib/questionsActions";
 import { getDates } from "@/lib/settingsActions";
 import { CURRENT_DATE } from "@/lib/constants";
 import {redirect} from "next/navigation";
@@ -20,7 +20,7 @@ export default async function Page() {
     redirect("/home");
   }
   const year = CURRENT_DATE.getFullYear()
-  const question_res = await getQuestions(year); 
+  const question_res = await getQuestionsWithAnswers(year); 
   if(!question_res.ok){
     throw new Error(question_res.error);
   }
