@@ -21,8 +21,8 @@ CREATE TABLE settings (
 CREATE TABLE questions (
   "questionid" INTEGER PRIMARY KEY DEFAULT nextval('"Question_Id_seq"'),
   "text" TEXT,
-  "year" SMALLINT NOT NULL
-  
+  "year" SMALLINT NOT NULL,
+  "result" boolean
 );
 
 CREATE TABLE answers (

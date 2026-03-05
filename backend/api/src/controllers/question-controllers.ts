@@ -187,7 +187,15 @@ export async function handlePutQuestion(req: Request, res: Response){
             console.error("handlePutQuestion: text cannot be empty")
             return res.status(400).json({ err: "text cannot be empty" });
         }
-        const updated = await putQuestion(qid, text);
+        let result = req.body.result;
+        if(result == undefined){
+            result = null
+        }
+        if(typeof(result) != "boolean" && result != null){
+            console.error("handlePutQuestion: result must be a boolean or null");
+            return res.status(400).json({ err: "result must be a boolean or null "});
+        }
+        const updated = await putQuestion(qid, text, result);
         if(updated == null){
             console.error("handlePutQuestion: question not found")
             return res.status(404).json({ err: 'question not found' });

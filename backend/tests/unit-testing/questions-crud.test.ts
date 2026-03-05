@@ -39,17 +39,18 @@ describe('Database CRUD tests for questions', () => {
             expect(questionCopy.questionid).toBe(newQuestion.questionid)
         })
         it('put on nonexistant question', async () => {
-            const noupdate = await putQuestion(30,"doesn't exist");
+            const noupdate = await putQuestion(30,"doesn't exist", null);
             expect(noupdate).toBe(null)
             const check = await getQuestion(30);
             expect(check).toBe(null)
         })
         it('real put', async () => {
-            const questionUpdated = await putQuestion(qid, "did it update?")
+            const questionUpdated = await putQuestion(qid, "did it update?", true)
             expect(questionUpdated).not.toBe(null)
             expect(questionUpdated.text).toBe("did it update?")
             expect(questionUpdated.year).toBe(2020)
             expect(questionUpdated.questionid).toBe(qid)
+            expect(questionUpdated.result).toBe(true)
             const questionCopy = await getQuestion(qid);
             expect(questionCopy.text).toBe("did it update?")
             expect(questionCopy.year).toBe(questionUpdated.year)

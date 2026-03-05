@@ -11,21 +11,36 @@ export async function getQuestionsByYear(year: number){
 }
 export async function postQuestion(text: string, year: number){
   const query = `
-    INSERT INTO public."questions" (text, year)
-    VALUES ($1, $2)
+    INSERT INTO public."questions" (text, year,result)
+    VALUES ($1, $2, $3)
     RETURNING *;`;
-  const res =  await pool.query(query, [text,year]);
+  const res =  await pool.query(query, [text,year, null]);
   return res.rows[0] || null;
 }
-export async function putQuestion(qid: number, text: string){
-  const query = `
-    UPDATE public."questions"
-    SET 
-        text = $2
-    WHERE questionid = $1
-    RETURNING *;
-  `
-  const res = await pool.query(query, [qid, text]);
+export async function putQuestion(qid: number, text: string, result: boolean | null){
+  let args;
+  let query;
+  if(result == null){
+    query = `
+      UPDATE public."questions"
+      SET 
+          text = $2
+      WHERE questionid = $1
+      RETURNING *;
+    `
+    args = [qid, text]
+  }else{
+    query = `
+      UPDATE public."questions"
+      SET 
+          text = $2,
+          result = $3
+      WHERE questionid = $1
+      RETURNING *;
+    `
+    args = [qid, text, result]
+  }
+  const res = await pool.query(query, args);
   return res.rows[0] || null;
 }
 export async function deleteQuestionWithAssociatedAnswers(qid:number){

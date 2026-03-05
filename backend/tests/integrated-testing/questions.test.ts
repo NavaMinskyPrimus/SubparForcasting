@@ -130,7 +130,7 @@ describe('Questions API Integration Tests', () => {
             expect(getIt.body.text).toBe("Is the date right?")
             expect(getIt.body.year).toBe(oneYearFromToday.getFullYear())
         })
-        it('should fial to edit a question', async() =>{
+        it('should fail to edit a question', async() =>{
             await request(app)
                 .put('/api/questions')
                 .set("x-test-sub", "not-a-sub")
@@ -169,6 +169,11 @@ describe('Questions API Integration Tests', () => {
             await request(app)
                 .put('/api/questions')
                 .set("x-test-sub", "sub3")
+                .send({text : "A valid question", questionid: 1, result: "nope"})
+                .expect(400);
+            await request(app)
+                .put('/api/questions')
+                .set("x-test-sub", "sub3")
                 .send({text : "Question that will fail", questionid: 1000})
                 .expect(404);
         })
@@ -180,7 +185,7 @@ describe('Questions API Integration Tests', () => {
             await request(app)
                 .put('/api/questions')
                 .set("x-test-sub", "sub3")
-                .send({text : "did it change?", questionid: qids[0]})
+                .send({text : "did it change?", questionid: qids[0], result: true})
                 .expect(200);
             const after_edit = await request(app)
                 .get('/api/questions')
@@ -188,7 +193,26 @@ describe('Questions API Integration Tests', () => {
                 .expect(200);
             expect(after_edit.body.text).toBe("did it change?")
             expect(after_edit.body.year).toBe(before_edits.body.year)
+            expect(after_edit.body.result).toBe(true)
         })
+        it("shouldn't change the result", async () => {
+            const before_edits = await request(app)
+                .get('/api/questions')
+                .query({questionid: qids[0]})
+                .expect(200);
+            await request(app)
+                .put('/api/questions')
+                .set("x-test-sub", "sub3")
+                .send({text : "not important", questionid: qids[0]})
+                .expect(200);
+            const after_edit = await request(app)
+                .get('/api/questions')
+                .query({questionid: qids[0]})
+                .expect(200);
+            expect(after_edit.body.text).toBe("not important")
+            expect(after_edit.body.year).toBe(before_edits.body.year)
+            expect(after_edit.body.result).toBe(before_edits.body.result)
+        });
         it('fail to deleted quesions',async () =>{
             await request(app)
                 .delete('/api/questions')
