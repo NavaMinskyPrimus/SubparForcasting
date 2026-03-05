@@ -4,6 +4,7 @@ import { app } from "../../server";
 import { pool } from "../../database/pool";
 
 describe('Answers API Integration Tests', () => {
+    let user_result
     describe('GET /api/answers', () => {
         it('should get all answers', async () => {
             const response = await request(app)
@@ -32,6 +33,7 @@ describe('Answers API Integration Tests', () => {
                 .expect(404);
         });
         let posted_answers : {questionid:number, userid: number, probability: number}[] = []
+        let testsubId: number;
         it('should post an answer', async () => {
             await request(app)
                 .post('/api/answers/one')
@@ -76,7 +78,7 @@ describe('Answers API Integration Tests', () => {
                 .expect(404);
         });
         it('should post two answers', async () =>{
-            const user_result = await request(app)
+            user_result = await request(app)
                 .post('/api/users')
                 .set("x-test-sub", "sub3")
                 .send({name: "Test User", email: "test@user.org", permission: "user", sub: "testsub"})
@@ -147,7 +149,14 @@ describe('Answers API Integration Tests', () => {
                     .expect(200);
                 expect(answers_left.body).not.toContainEqual(ans)
             }
-
+            await request(app)
+                .delete('/api/users')
+                .set("x-test-sub", "sub3")
+                .send({userid: 101})
+                .expect(200);
+             const req = await request(app)
+                .get('/api/users/101')
+                .expect(404);
         })
     });
 });
