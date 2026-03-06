@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { deleteQuestionWithAssociatedAnswers, getQuestion, getQuestionsByYear, postQuestion, putQuestion } from "../../../database/question-queries";
+import { changeValidation, deleteQuestionWithAssociatedAnswers, getQuestion, getQuestionsByYear, postQuestion, putQuestion } from "../../../database/question-queries";
 import { getSettings } from "../../../database/settings-queries"
 import { getUserBySub } from "../../../database/user-queries";
 import { checkAnswer } from "../../../database/answer-queries";
@@ -242,5 +242,51 @@ export async function handleGetQuestionsWithAnswers(req: Request, res: Response)
     } catch (err) {
         console.error("handleGetQuestionsWithAnswers: Failed to get questions", err);
         res.status(500).json({ err: "Failed to get questions" });
+    }
+}
+
+export async function handleValidation(req: Request, res: Response) {
+    try{
+        if (!req.body ){
+            console.error("handleValidation: body is undefined")
+            return res.status(400).json({err: "body is undefined"});
+        }
+        if (!req.auth?.sub) {
+            console.error("handleValidation: authentication required")
+            return res.status(401).json({ err: 'Authentication required' });
+        }
+        const sub = req.auth.sub;
+        const currentUser = await getUserBySub(sub);
+        if(!currentUser){
+            console.error("handleValidation: current user not found in database")
+            return res.status(404).json({ err: 'current user not found' });
+        }
+        if(currentUser.permission != "admin"){
+            console.error("handleValidation: only admins can change validation");
+            return res.status(403).json({err: "only admins can change validation"})
+        }
+        const qid = req.body.questionid;
+        if (qid === undefined) {
+            console.error("handleValidation: qid is requiered")
+            return res.status(400).json({err: "qid is requiered"});
+        }
+        if (typeof qid !== "number" || !Number.isInteger(qid) || qid <= 0) {
+            console.error("handleValidation: qid must be a positive integer")
+            return res.status(400).json({ err: "qid must be a positive integer" });
+        }
+        const isvalid = req.body.isvalid;
+        if(typeof(isvalid) != 'boolean'){
+            console.error("handleValidation: isvalid must be a boolean")
+            return res.status(400).json({ err: "isvalid must be a boolean" });
+        }
+        const changed = await changeValidation(qid, isvalid);
+        if(changed == null){
+            console.error("handleValidation: question not found")
+            return res.status(404).json({ err: 'question not found' });
+        }
+        res.status(200).json(changed);
+    }catch(err){
+        console.error("handleValidation: Failed to update validation", err);
+        res.status(500).json({ err: "Failed to update validation" });
     }
 }

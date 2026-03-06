@@ -2,6 +2,7 @@ import 'dotenv/config';
 import request from 'supertest';
 import { app } from "../../server";
 import { pool } from "../../database/pool";
+import { describe } from 'node:test';
 
 describe('Questions API Integration Tests', () => {
     describe('get tests', () => {
@@ -11,12 +12,14 @@ describe('Questions API Integration Tests', () => {
                 .query({questionid: 2})
                 .expect(200);
             expect(response.body.text).toBe("Will my dog eat food tomorow")
+            expect(response.body.isvalid)
         })
         it('should get question year', async () => {
             const response = await request(app)
                 .get('/api/questions/year')
                 .query({year: 2010})
                 .expect(200);
+            expect(response.body[0].text).toBe("What are the chances i EAT YOU")
             expect(response.body[0].text).toBe("What are the chances i EAT YOU")
         })
         it('should get questions with answers', async () =>{
@@ -30,7 +33,7 @@ describe('Questions API Integration Tests', () => {
     })
     describe('post, put, delete tests', () => {
         let qids: number[] = [];
-        it('should fial to post a new question', async() =>{
+        it('should fail to post a new question', async() =>{
             await request(app)
                 .post('/api/questions')
                 .set("x-test-sub", "not-a-sub")
@@ -258,6 +261,75 @@ describe('Questions API Integration Tests', () => {
                     .expect(404);
             }
         })
+    })
+    describe('validation change', () => {
+        it('fail to invalidate', async () => {
+            await request(app)
+                .put('/api/questions/isvalid')
+                .set("x-test-sub", "not-a-sub")
+                .send({questionid: 1})
+                .expect(404);
+            await request(app)
+                .put('/api/questions/isvalid')
+                .set("x-test-sub", "sub1")
+                .send({questionid: 1})
+                .expect(403);
+            await request(app)
+                .put('/api/questions/isvalid')
+                .set("x-test-sub", "sub3")
+                .send({ isvalid: true})
+                .expect(400);
+            await request(app)
+                .put('/api/questions/isvalid')
+                .set("x-test-sub", "sub3")
+                .send({questionid: 1000, isvalid: true})
+                .expect(404);
+            await request(app)
+                .put('/api/questions/isvalid')
+                .set("x-test-sub", "sub3")
+                .send({questionid: -1, isvalid: true})
+                .expect(400);
+            await request(app)
+                .put('/api/questions/isvalid')
+                .set("x-test-sub", "sub3")
+                .send({questionid: "hi", isvalid: true})
+                .expect(400);
+
+            await request(app)
+                .put('/api/questions/isvalid')
+                .set("x-test-sub", "sub3")
+                .send({questionid: 1, isvalid: "hi"})
+                .expect(400);
+            await request(app)
+                .put('/api/questions/isvalid')
+                .set("x-test-sub", "sub3")
+                .send({questionid: 1})
+                .expect(400);
+        });
+        it('invalidate and revalidate', async ()=>{
+            await request(app)
+                .put('/api/questions/isvalid')
+                .set("x-test-sub", "sub3")
+                .send({questionid: 1, isvalid : false})
+                .expect(200);
+            const response1 = await request(app)
+                .get('/api/questions')
+                .query({questionid: 1})
+                .expect(200);
+            expect(response1.body.isvalid).toBe(false)
+
+            await request(app)
+                .put('/api/questions/isvalid')
+                .set("x-test-sub", "sub3")
+                .send({questionid: 1, isvalid : true})
+                .expect(200);
+            const response2 = await request(app)
+                .get('/api/questions')
+                .query({questionid: 1})
+                .expect(200);
+            expect(response2.body.isvalid).toBe(true)
+            
+        });
     })
 });
 

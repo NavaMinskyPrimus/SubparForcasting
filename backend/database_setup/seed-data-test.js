@@ -31,13 +31,15 @@ const questions = [
         questionid: 1,
         text: 'What are the chances i EAT YOU',
         year: 2010,
-        result: null
+        result: null,
+        isvalid: true
     },
     {
         questionid: 2,
         text: 'Will my dog eat food tomorow',
         year: 2011,
-        result: null
+        result: null,
+        isvalid: true
     },
 ];
 const settings = ['2026-01-02T00:00:00Z','2026-01-09T00:00:00Z']

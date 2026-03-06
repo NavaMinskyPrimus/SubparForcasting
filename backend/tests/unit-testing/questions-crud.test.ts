@@ -1,7 +1,7 @@
 require('dotenv').config();
 import { pool } from './../../database/pool';
 import { describe } from 'node:test';
-import { deleteQuestionWithAssociatedAnswers, getQuestion, getQuestionsByYear, postQuestion, putQuestion } from '../../database/question-queries';
+import { changeValidation, deleteQuestionWithAssociatedAnswers, getQuestion, getQuestionsByYear, postQuestion, putQuestion } from '../../database/question-queries';
 import {checkAnswer, getAnswersByQID, getAnswersByUID, postAnswer} from '../../database/answer-queries';
 
 describe('Database CRUD tests for questions', () => {
@@ -11,6 +11,7 @@ describe('Database CRUD tests for questions', () => {
             expect(question).not.toBe(null);
             const text = question.text;
             expect(text).toBe("What are the chances i EAT YOU");
+            expect(question.isvalid).toBe(true)
         });
         it('get by year', async () =>{
             const questions2010 = await getQuestionsByYear(2010);
@@ -72,6 +73,16 @@ describe('Database CRUD tests for questions', () => {
             expect(answers).toBeDefined()
             expect(Array.isArray(answers)).toBe(true)
             expect(answers.length).toBe(0)
+        })
+    });
+    describe('invalidations and validations', async () => {
+        it('invalidate', async () =>{
+            const question = await changeValidation(1, false);
+            expect(question.isvalid).toBe(false)
+        })
+        it('validate', async () =>{
+            const question = await changeValidation(1, true);
+            expect(question.isvalid).toBe(true)
         })
     });
 });

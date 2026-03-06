@@ -11,12 +11,24 @@ export async function getQuestionsByYear(year: number){
 }
 export async function postQuestion(text: string, year: number){
   const query = `
-    INSERT INTO public."questions" (text, year,result)
-    VALUES ($1, $2, $3)
+    INSERT INTO public."questions" (text, year,result, isvalid)
+    VALUES ($1, $2, $3, $4)
     RETURNING *;`;
-  const res =  await pool.query(query, [text,year, null]);
+  const res =  await pool.query(query, [text,year, null, true]);
   return res.rows[0] || null;
 }
+
+export async function changeValidation(qid: number, validation: boolean){
+  const query = `      
+    UPDATE public."questions"
+      SET 
+          isvalid = $2
+      WHERE questionid = $1
+    RETURNING *;`;
+  const res =  await pool.query(query, [qid,validation]);
+  return res.rows[0] || null;
+}
+
 export async function putQuestion(qid: number, text: string, result: boolean | null){
   let args;
   let query;

@@ -22,7 +22,8 @@ CREATE TABLE questions (
   "questionid" INTEGER PRIMARY KEY DEFAULT nextval('"Question_Id_seq"'),
   "text" TEXT,
   "year" SMALLINT NOT NULL,
-  "result" boolean
+  "result" boolean,
+  "isvalid" boolean
 );
 
 CREATE TABLE answers (
