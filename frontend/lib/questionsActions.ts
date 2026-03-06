@@ -23,6 +23,22 @@ export async function addQuestion(text: string):Promise<ActionResult<any>>{
 }
 
 export async function getQuestionsWithAnswers(year: number): Promise<ActionResult<any>>{
-   const url = `${process.env.BACKEND_URL}/api/questions//with-answers?year=${encodeURIComponent(year)}`;
+  const url = `${process.env.BACKEND_URL}/api/questions//with-answers?year=${encodeURIComponent(year)}`;
   return authedFetch(url, {method: "GET"})
+}
+
+
+export async function invalidateQuestion(qid:number): Promise<ActionResult<any>> {
+  const url = `${process.env.BACKEND_URL}/api/questions/isvalid`;
+  return authedFetch(url, {method: "PUT", body: JSON.stringify({questionid: qid, isvalid: false})})
+}
+
+export async function validateQuestion(qid:number): Promise<ActionResult<any>> {
+  const url = `${process.env.BACKEND_URL}/api/questions/isvalid`;
+  return authedFetch(url, {method: "PUT", body: JSON.stringify({questionid: qid, isvalid: true})})
+}
+
+export async function setResult(qid:number, text: string, result: boolean): Promise<ActionResult<any>> {
+   const url = `${process.env.BACKEND_URL}/api/questions`;
+  return authedFetch(url, {method: "PUT", body: JSON.stringify({ questionid: qid, text: text, result: result})})
 }

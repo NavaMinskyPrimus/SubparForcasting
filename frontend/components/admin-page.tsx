@@ -5,23 +5,36 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Header } from "@/components/header";
-import { Plus, Calendar, Edit2, Save, X } from "lucide-react";
+import { Plus, Calendar, Edit2, Save, X, Ban, CheckCircle } from "lucide-react";
 import { CURRENT_DATE, CURRENT_YEAR } from "@/lib/constants";
 import { setWindow } from "@/lib/settingsActions";
 import { fromZonedTime } from "date-fns-tz";
-import { addQuestion, deleteQuestion, editQuestion } from "@/lib/questionsActions";
+import { addQuestion, deleteQuestion, editQuestion, invalidateQuestion, setResult, validateQuestion } from "@/lib/questionsActions";
 
 type Question = {
   id: number;
   text: string;
 };
-export function AdminPage({ rows, isAdmin, nextGame, playing}: { rows: any[], isAdmin: boolean, nextGame : number, playing:boolean}) {
-  const data: Question[] = rows.map(
+
+type LastYearQuestion = {
+  id: number;
+  text: string;
+  result: boolean | null;
+  isvalid: boolean;
+};
+
+export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing }: { rowsnext: any[], rowslast: any[],isAdmin: boolean, nextGame: number, playing: boolean }) {
+  const data: Question[] = rowsnext.map(
   (val => ({id: val.questionid, text: val.text}))
+  );
+
+  const lastYearData: LastYearQuestion[] = rowslast.map(
+    (val) => ({ id: val.questionid, text: val.text, result: val.result ?? null, isvalid: val.isvalid })
   );
 
   const router = useRouter();
   const [question_data, setQuestionData] = useState<Question[]>(data);
+  const [lastYearQuestions, setLastYearQuestions] = useState<LastYearQuestion[]>(lastYearData);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingText, setEditingText] = useState("");
   const [newQuestion, setNewQuestion] = useState("");
@@ -36,6 +49,11 @@ export function AdminPage({ rows, isAdmin, nextGame, playing}: { rows: any[], is
   const [editQError, setEditQError] = useState<string | null>(null);
   const [deleteQStatus, setDeleteQStatus] = useState<SaveStatus>("idle");
   const [deleteQError, setDeleteQError] = useState<string | null>(null);
+  const [validUpdateStatus, setValidUpdateStatus] = useState<SaveStatus>("idle");
+  const [validUpdateError, setValidUpdateError] =  useState<string | null>(null);
+  const [resultUpdateStatus, setResultUpdateStatus] = useState<SaveStatus>("idle");
+  const [resultUpdateError, setResultUpdateError] =   useState<string | null>(null);
+
 
 
   const handleSaveDates = () => {
@@ -135,6 +153,58 @@ export function AdminPage({ rows, isAdmin, nextGame, playing}: { rows: any[], is
     setEditingText("");
   };
 
+  const handleInvalidateQuestion = (index: number) => {
+    setValidUpdateStatus("saving")
+    startTransition(async () =>{
+      const data = lastYearQuestions[index];
+      const qid = data.id
+      const res = await invalidateQuestion(qid)
+      if(!res.ok){
+        setValidUpdateStatus("error")
+        setValidUpdateError(res.error)
+        return;
+      }
+      setLastYearQuestions((prev) =>
+        prev.map((q, i) => i === index ? { ...q, isvalid: false } : q)
+      );
+    })
+  };
+
+  const handleRevalidateQuestion = (index: number) => {
+    setValidUpdateStatus("saving")
+    startTransition(async () =>{
+      const data = lastYearQuestions[index];
+      const qid = data.id
+      const res = await validateQuestion(qid)
+      if(!res.ok){
+        setValidUpdateStatus("error")
+        setValidUpdateError(res.error)
+        return;
+      }
+      setLastYearQuestions((prev) =>
+        prev.map((q, i) => i === index ? { ...q, isvalid: true } : q)
+      );
+    })
+  };
+
+  const handleSetResult = (index: number, result: boolean) => {
+    setResultUpdateStatus("saving")
+    startTransition(async () => {
+      const data = lastYearQuestions[index];
+      const qid = data.id
+      const text = data.text
+      const res = await setResult(qid, text, result)
+      if(!res.ok){
+        setResultUpdateStatus("error")
+        setResultUpdateError(res.error)
+        return
+      }
+      setLastYearQuestions((prev) =>
+        prev.map((q, i) => i === index ? { ...q, result, isvalid: true } : q)
+      );
+    })
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#228B22] via-blue-600 to-purple-600">
       <Header isAdmin={isAdmin} playing={playing}/>
@@ -142,12 +212,14 @@ export function AdminPage({ rows, isAdmin, nextGame, playing}: { rows: any[], is
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">Admin Panel</h1>
-          <p className="text-white/90">
-            Manage questions and settings for {nextGame}
-          </p>
+          <p className="text-white/90">Manage questions and settings</p>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-8">
+          {/* NEXT YEAR SECTION */}
+          <div>
+            <h2 className="text-3xl font-bold text-white mb-4">Next Year ({nextGame})</h2>
+            <div className="space-y-6">
           {/* Set Opening Dates Section */}
           <Card className="bg-white/95 backdrop-blur shadow-xl">
             <CardHeader>
@@ -364,6 +436,123 @@ export function AdminPage({ rows, isAdmin, nextGame, playing}: { rows: any[], is
                   )}
             </CardContent>
           </Card>
+            </div>
+          </div>
+
+          {/* LAST YEAR SECTION */}
+          <div>
+            <h2 className="text-3xl font-bold text-white mb-4">Last Year ({CURRENT_YEAR})</h2>
+
+            <Card className="bg-white/95 backdrop-blur shadow-xl">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-blue-600" />
+                  {CURRENT_YEAR} Questions - Enter Results
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {(validUpdateStatus === "error" || resultUpdateStatus === "error") && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-300 rounded-lg flex items-start justify-between gap-2">
+                    <p className="text-sm text-red-700">
+                      {validUpdateStatus === "error"
+                        ? `Failed to update validity: ${validUpdateError}`
+                        : `Failed to update result: ${resultUpdateError}`}
+                    </p>
+                    <button
+                      onClick={() => { setValidUpdateStatus("idle"); setResultUpdateStatus("idle"); }}
+                      className="text-red-500 hover:text-red-700 shrink-0"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+                {lastYearQuestions.length > 0 ? (
+                  <div className="space-y-3">
+                    {lastYearQuestions.map((q, index) => (
+                      <div
+                        key={index}
+                        className={`p-4 rounded-lg border ${
+                          !q.isvalid
+                            ? 'bg-gray-100 border-gray-300'
+                            : q.result !== null
+                            ? 'bg-green-50 border-green-300'
+                            : 'bg-white border-gray-200'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <p className={`text-sm ${!q.isvalid ? 'text-gray-500 line-through' : 'text-gray-800'}`}>
+                              {q.text}
+                            </p>
+                            {!q.isvalid && (
+                              <p className="text-xs text-red-600 mt-1 font-medium">INVALIDATED</p>
+                            )}
+                            {q.result !== null && q.isvalid && (
+                              <p className="text-xs text-green-700 mt-1 font-medium">
+                                Result: {q.result ? 'TRUE' : 'FALSE'}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            {q.isvalid && (
+                              <>
+                                <Button
+                                  onClick={() => handleSetResult(index, true)}
+                                  className={`${
+                                    q.result === true
+                                      ? 'bg-green-600 hover:bg-green-700'
+                                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                                  } text-white`}
+                                  size="sm"
+                                >
+                                  True
+                                </Button>
+                                <Button
+                                  onClick={() => handleSetResult(index, false)}
+                                  className={`${
+                                    q.result === false
+                                      ? 'bg-green-600 hover:bg-green-700'
+                                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                                  } text-white`}
+                                  size="sm"
+                                >
+                                  False
+                                </Button>
+                              </>
+                            )}
+                            {!q.isvalid ? (
+                              <Button
+                                onClick={() => handleRevalidateQuestion(index)}
+                                variant="ghost"
+                                size="sm"
+                                className="text-green-700 bg-red-100 hover:bg-green-100 hover:text-green-800"
+                              >
+                                <CheckCircle className="w-4 h-4 mr-1" />
+                                Revalidate
+                              </Button>
+                            ) : (
+                              <Button
+                                onClick={() => handleInvalidateQuestion(index)}
+                                variant="ghost"
+                                size="sm"
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Ban className="w-4 h-4 mr-1" />
+                                Invalidate
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-center py-4">No questions from {CURRENT_YEAR} to review.</p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>

@@ -29,6 +29,12 @@ export default async function Page() {
   if(!response.ok){
     throw new Error(response.error);
   }
-  const questions = response.data
-  return <AdminPage rows={questions} isAdmin={isa} nextGame={year} playing={playing}/>;
+  const questionsnew = response.data;
+
+  const last_year_response = await getQuestions(year - 1);
+  if(!last_year_response.ok){
+    throw new Error(last_year_response.error);
+  }
+
+  return <AdminPage rowsnext={questionsnew} rowslast={last_year_response.data} isAdmin={isa} nextGame={year} playing={playing}/>;
 }
