@@ -23,7 +23,7 @@ CREATE TABLE questions (
   "text" TEXT,
   "year" SMALLINT NOT NULL,
   "result" boolean,
-  "isvalid" boolean
+  "isvalid" boolean NOT NULL
 );
 
 CREATE TABLE answers (

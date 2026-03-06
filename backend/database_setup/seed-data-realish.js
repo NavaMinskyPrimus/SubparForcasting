@@ -26,13 +26,15 @@ const questions = [
         questionid: 1,
         text: 'What are the chances i EAT YOU',
         year: 2026,
-        result: null
+        result: null,
+        isvalid: true
     },
     {
         questionid: 2,
         text: 'Will my dog eat food tomorow',
         year: 2027,
-        result: null
+        result: null,
+        isvalid: true
     },
 ];
 
