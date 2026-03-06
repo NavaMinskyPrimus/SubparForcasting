@@ -441,13 +441,13 @@ export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing }: { 
 
           {/* LAST YEAR SECTION */}
           <div>
-            <h2 className="text-3xl font-bold text-white mb-4">Last Year ({CURRENT_YEAR})</h2>
+            <h2 className="text-3xl font-bold text-white mb-4">Last Year ({nextGame - 1})</h2>
 
             <Card className="bg-white/95 backdrop-blur shadow-xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-blue-600" />
-                  {CURRENT_YEAR} Questions - Enter Results
+                  {nextGame - 1} Questions - Enter Results
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -548,7 +548,7 @@ export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing }: { 
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-center py-4">No questions from {CURRENT_YEAR} to review.</p>
+                  <p className="text-gray-500 text-center py-4">No questions from {nextGame - 1} to review.</p>
                 )}
               </CardContent>
             </Card>
