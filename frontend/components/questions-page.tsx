@@ -21,7 +21,7 @@ interface Answer {
 
 export function QuestionsPage({rows, isAdmin, origional_answers}: {rows: any[], isAdmin: boolean, origional_answers: any[]}) {
   const [answers, setAnswers] = useState<Answer[]>(
-    rows.map(q => ({ questionId: q.questionid, probability: q.probability, inputValue: String(gq.probability) }))
+    rows.map(q => ({ questionId: q.questionid, probability: q.probability, inputValue: String(q.probability) }))
   );
   type SaveStatus = "idle" | "saving" | "success" | "error";
   const [answersSaveStatus, setAnswersSaveStatus] = useState<SaveStatus>("idle");
