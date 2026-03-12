@@ -10,6 +10,7 @@ import answerRoutes from './api/src/routes/answers';
 import loginRoutes from './api/src/routes/login';
 import settingsRoutes from './api/src/routes/settings';
 import questionsRoutes from './api/src/routes/questions';
+import resultsRoutes from './api/src/routes/results';
 app.use(express.json());
 
 app.use("/api/users", userRoutes);
@@ -17,6 +18,7 @@ app.use("/api/questions", questionsRoutes);
 app.use("/api/login", loginRoutes);
 app.use("/api/answers", answerRoutes);
 app.use("/api/settings", settingsRoutes);
+app.use("/api/results", resultsRoutes);
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'OK' });

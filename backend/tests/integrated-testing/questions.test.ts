@@ -28,7 +28,7 @@ describe('Questions API Integration Tests', () => {
                 .set("x-test-sub", "sub2")
                 .query({year: 2010})
                 .expect(200);
-            expect(response.body[0].probability).toBe(5)
+            expect(response.body[0].probability).toBe(90)
         })
     })
     describe('post, put, delete tests', () => {

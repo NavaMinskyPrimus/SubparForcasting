@@ -1,6 +1,14 @@
 import { pool } from './pool';
 import type { PoolClient } from "pg";
 
+export type Question = {
+  questionid: number;
+  text: string;
+  year: number;
+  result: boolean | null;
+  isvalid: boolean;
+};
+
 export async function getQuestion(qid: number){
   const res = await pool.query('SELECT * FROM public."questions" WHERE questionid = $1;', [qid]);
   return res.rows[0]||null;

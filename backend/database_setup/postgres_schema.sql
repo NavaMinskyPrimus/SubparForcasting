@@ -34,4 +34,13 @@ CREATE TABLE answers (
     FOREIGN KEY ("userid") REFERENCES "users"("userid"),
     FOREIGN KEY ("questionid") REFERENCES "questions"("questionid"),
     CONSTRAINT probability_range CHECK (probability >= 0 AND probability <= 100)
-)
+);
+
+CREATE TABLE results (
+  "userid" INTEGER NOT NULL,
+  "user name" TEXT,
+  "year" INTEGER NOT NULL,
+  "confidence" FLOAT,
+  "score" FLOAT,
+  PRIMARY KEY ("userid", "year")
+);

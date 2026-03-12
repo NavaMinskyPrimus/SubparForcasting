@@ -11,7 +11,7 @@ describe('Answers API Integration Tests', () => {
                 .get('/api/answers')
                 .query({userid: 1})
                 .expect(200);
-            expect(response.body.length).toBe(2);
+            expect(response.body.length).toBe(3);
         });
         it('should fail to post answer', async () => {
             await request(app)

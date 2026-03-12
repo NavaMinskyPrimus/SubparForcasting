@@ -15,6 +15,10 @@ export async function getUserBySub(sub: string) {
   const res = await pool.query('SELECT * FROM public."users" WHERE sub = $1;', [sub]);
   return res.rows[0] ?? null;
 }
+export async function getUserByEmail(email: string) {
+  const res = await pool.query('SELECT * FROM public."users" WHERE email = $1;', [email]);
+  return res.rows[0] ?? null;
+}
 
 export async function postUser(
   name: string,

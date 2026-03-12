@@ -1,4 +1,4 @@
-import { deleteUserWithAssociatedAnswers, getUserByID, getUserBySub, getUsers, postUser} from '../../../database/user-queries';
+import { deleteUserWithAssociatedAnswers, getUserByEmail, getUserByID, getUserBySub, getUsers, postUser} from '../../../database/user-queries';
 import {deleteAnswersByUID} from '../../../database/answer-queries';
 import type { Request, Response } from "express";
 
@@ -52,7 +52,6 @@ export async function  handleGetCurrentUser(req: Request, res: Response) {
   }
 }
 
-
 export async function handlePostUser(req: Request, res: Response) {
     try{
         if (!req.body ){
@@ -101,7 +100,6 @@ export async function handleDeleteUser(req: Request, res: Response) {
             return res.status(401).json({ err: 'Authentication required' });
         }
         const sub = req.auth.sub;
-        console.log(sub);
         const currentUser = await getUserBySub(sub);
         if(!currentUser){
             return res.status(404).json({ err: 'current user not found' });
@@ -122,5 +120,47 @@ export async function handleDeleteUser(req: Request, res: Response) {
     }catch(err){
         console.error("Failed to delete user", err);
         res.status(500).json({ err: "Failed to delete user" });
+    }
+}
+
+export async function handleMakeAdmin(req: Request, res: Response){
+    try {
+        if (!req.body ){
+            console.error("handleMakeAdmin: body is undefined")
+            res.status(400).json({err: "body is undefined"});
+            return
+        }
+        if (!req.auth?.sub) {
+            console.error("handleMakeAdmin: Authentication required")
+            return res.status(401).json({ err: 'Authentication required' });
+        }
+        const sub = req.auth.sub;
+        const currentUser = await getUserBySub(sub);
+        if(!currentUser){
+            console.error("handleMakeAdmin: current user not found")
+            return res.status(404).json({ err: 'current user not found' });
+        }
+        if(currentUser.permission != "admin"){
+            console.error("handleMakeAdmin: only admins can make a user an admin")
+            return res.status(403).json({err: 'only admins can make a user an admin'})
+        }
+        const email = req.body.email;
+        if(typeof(email) != 'string'){
+            console.error("handleMakeAdmin: emails must be strings")
+            return res.status(403).json({err: 'emails must be strings'})
+        }
+        const user = await getUserByEmail(email)
+        if(user == null){
+            console.error("handleMakeAdmin: user not found")
+            return res.status(404).json({err: 'user not found'})
+        }
+        const changed = await postUser(user.name, user.email, "admin", user.sub);
+        if(changed == null){
+            return res.status(500).json({ err: 'postUser failed' });
+        }
+        res.status(200).json(changed);
+    } catch (err) {
+        console.error("handleMakeAdmin: failed to make user an admin", err);
+        res.status(500).json({ err: "Failed to make user an admin" });
     }
 }

@@ -1,6 +1,6 @@
 const { Client } = require("pg");
 // seed mock database with mock users, listings, photos, etc
-async function seedDatabase(users = [], questions = [], answers = [], settings=[]) {
+async function seedDatabase(users = [], questions = [], answers = [], settings = [], results = []) {
     const client = new Client({
         user: process.env.DB_USER || 'localuser', // default is the test database
         host: process.env.DB_HOST || 'localhost',
@@ -65,6 +65,18 @@ async function seedDatabase(users = [], questions = [], answers = [], settings=[
                 );
             }
             console.log(`Inserted ${answers.length} answers`);
+        }
+        // Insert results
+        if (results.length > 0) {
+            console.log(`Inserting ${results.length} result(s)...`);
+            for (const result of results) {
+                await client.query(
+                    `INSERT INTO "results" ("userid", "user name", "year", "confidence", "score")
+                     VALUES ($1, $2, $3, $4, $5)`,
+                    [result.userid, result.userName, result.year, result.confidence, result.score]
+                );
+            }
+            console.log(`Inserted ${results.length} results`);
         }
     } catch (err) {
         console.error("Error seeding database:", err.message);

@@ -38,6 +38,9 @@ const questions = [
     },
 ];
 
+const results = [
+]
+
 const answers = [
     {
         userid: 1,
