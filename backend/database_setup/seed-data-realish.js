@@ -38,9 +38,7 @@ const questions = [
     },
 ];
 
-const results = [
-]
-
+const results = []
 const answers = [
     {
         userid: 1,
