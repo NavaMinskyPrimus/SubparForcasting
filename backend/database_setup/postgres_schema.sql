@@ -15,7 +15,8 @@ CREATE TABLE users (
 CREATE TABLE settings (
   id boolean PRIMARY KEY DEFAULT true,     -- forces single row
   questions_open  timestamptz NOT NULL,
-  questions_close timestamptz NOT NULL
+  questions_close timestamptz NOT NULL,
+  released_year   INTEGER NOT NULL
 );
 
 CREATE TABLE questions (

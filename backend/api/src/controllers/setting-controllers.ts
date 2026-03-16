@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { getSettings, setCloseDate, setDates, setOpenDate } from "../../../database/settings-queries";
+import { getSettings, setCloseDate, setDates, setOpenDate, setReleasedYear } from "../../../database/settings-queries";
 import { getUserBySub } from "../../../database/user-queries";
 
 export async function handleGetDates(req: Request, res: Response) {
@@ -73,6 +73,43 @@ export async function handleSetDates(req:Request, res: Response){
     }catch(err){
         console.error("handleSetDates: Failed to change dates", err);
         res.status(500).json({ err: "Failed to change dates" });
+    }
+}
+
+export async function handleGetReleasedYear(req: Request, res: Response) {
+    try {
+        const settings = await getSettings();
+        if (settings == null) {
+            return res.status(404).json({ err: 'Settings not found' });
+        }
+        res.json({ released_year: settings.released_year });
+    } catch (err) {
+        console.error('handleGetReleasedYear failed:', err);
+        res.status(500).json({ err: 'Failed to get released year' });
+    }
+}
+
+export async function handleSetReleasedYear(req: Request, res: Response) {
+    try {
+        if (!req.auth?.sub) {
+            return res.status(401).json({ err: 'Authentication required' });
+        }
+        const currentUser = await getUserBySub(req.auth.sub);
+        if (!currentUser) {
+            return res.status(404).json({ err: 'Current user not found' });
+        }
+        if (currentUser.permission !== 'admin') {
+            return res.status(403).json({ err: 'Only admins can update settings' });
+        }
+        const { year } = req.body;
+        if (!Number.isInteger(year) || year <= 0) {
+            return res.status(400).json({ err: 'year must be a positive integer' });
+        }
+        const updated = await setReleasedYear(year);
+        res.json({ released_year: updated.released_year });
+    } catch (err) {
+        console.error('handleSetReleasedYear failed:', err);
+        res.status(500).json({ err: 'Failed to set released year' });
     }
 }
 

@@ -32,6 +32,15 @@ export async function setOpenDate(date: Date){
   const res = await pool.query(query, value);
   return res.rows[0];
 }
+export async function setReleasedYear(year: number) {
+  const query = `UPDATE public."settings"
+    SET released_year = $2
+    WHERE id = $1
+    RETURNING *;`;
+  const res = await pool.query(query, [true, year]);
+  return res.rows[0];
+}
+
 export async function setCloseDate(date: Date){
   const query = `UPDATE public."settings"
     SET 

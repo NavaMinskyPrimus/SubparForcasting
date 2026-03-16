@@ -1,5 +1,5 @@
 require('dotenv').config();
-import { getSettings, setCloseDate, setDates, setOpenDate } from '../../database/settings-queries';
+import { getSettings, setCloseDate, setDates, setOpenDate, setReleasedYear } from '../../database/settings-queries';
 import { pool } from './../../database/pool';
 import { describe } from 'node:test';
 
@@ -49,5 +49,14 @@ describe('Database CRUD tests for settings', () => {
         expect(dates2).toBeDefined();
         expect(dates2.questions_open.toISOString()).toBe("2026-01-02T00:00:00.000Z");
         expect(dates2.questions_close.toISOString()).toBe("2026-01-09T00:00:00.000Z");
+    });
+    it('set released year', async () => {
+        await setReleasedYear(2025);
+        const s1 = await getSettings();
+        expect(s1.released_year).toBe(2025);
+        // restore
+        await setReleasedYear(2010);
+        const s2 = await getSettings();
+        expect(s2.released_year).toBe(2010);
     });
 });

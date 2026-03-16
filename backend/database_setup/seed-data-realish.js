@@ -19,18 +19,32 @@ const users = [
     },
 ];
 
-const settings = ['2026-01-02T00:00:00Z','2026-02-09T00:00:00Z']
+const settings = ['2026-01-02T00:00:00Z','2026-02-09T00:00:00Z', 2026]
 
 const questions = [
     {
         questionid: 1,
         text: 'What are the chances i EAT YOU',
         year: 2026,
-        result: null,
+        result: true,
         isvalid: true
     },
     {
         questionid: 2,
+        text: 'Will it rain in New Haven on New Years Day',
+        year: 2026,
+        result: true,
+        isvalid: true
+    },
+    {
+        questionid: 3,
+        text: 'Will the Orioles make the playoffs',
+        year: 2026,
+        result: false,
+        isvalid: true
+    },
+    {
+        questionid: 4,
         text: 'Will my dog eat food tomorow',
         year: 2027,
         result: null,
@@ -38,22 +52,57 @@ const questions = [
     },
 ];
 
-const results = []
+const results = [
+    {
+        userid: 1,
+        userName: 'Nava Minsky-Primus',
+        year: 2026,
+        confidence: null,
+        score: null
+    },
+    {
+        userid: 2,
+        userName: 'Nava Minsky-Primus',
+        year: 2026,
+        confidence: null,
+        score: null
+    },
+]
 const answers = [
     {
         userid: 1,
         questionid: 1,
-        probability: 10 
+        probability: 10
     },
     {
         userid: 1,
         questionid: 2,
-        probability: 99 
+        probability: 70
+    },
+    {
+        userid: 1,
+        questionid: 3,
+        probability: 40
     },
     {
         userid: 2,
         questionid: 1,
-        probability: 5 
+        probability: 5
+    },
+    {
+        userid: 2,
+        questionid: 2,
+        probability: 60
+    },
+    {
+        userid: 2,
+        questionid: 3,
+        probability: 25
+    },
+    {
+        userid: 1,
+        questionid: 4,
+        probability: 99
     },
 ];
 
@@ -62,7 +111,7 @@ const answers = [
 const { Client } = require('pg');
 
 async function seedAndUpdateSequences() {
-    await seedDatabase(users, questions, answers, settings);
+    await seedDatabase(users, questions, answers, settings, results);
     const client = new Client({
         user: process.env.DB_USER || 'localuser',
         host: process.env.DB_HOST || 'localhost',

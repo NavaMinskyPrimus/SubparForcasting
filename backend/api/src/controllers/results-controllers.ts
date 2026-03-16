@@ -5,6 +5,7 @@ import type { Question } from '../../../database/question-queries';
 import { getAnswersByUID } from '../../../database/answer-queries';
 import type { Answer } from '../../../database/answer-queries';
 import { upsertResult, getResultsByYear } from '../../../database/results-queries';
+import { getSettings, setReleasedYear } from '../../../database/settings-queries';
 
 function dbProbToFloat(prob: number): number {
   return prob / 100;
@@ -124,6 +125,11 @@ export async function handleComputeResults(req: Request, res: Response) {
 
       const saved = await upsertResult(user.userid, user.name, year, confidence, rawScore);
       savedResults.push(saved);
+    }
+
+    const settings = await getSettings();
+    if (year > settings.released_year) {
+      await setReleasedYear(year);
     }
 
     res.status(200).json(savedResults);

@@ -13,3 +13,17 @@ export async function setWindow({open,close}: {open: string; close: string}): Pr
   const url = `${process.env.BACKEND_URL}/api/settings/dates`;
   return authedFetch(url, {method: "POST", body: JSON.stringify({ questions_open: open, questions_close: close }),})
 }
+
+export async function getReleasedYear(): Promise<ActionResult<any>> {
+  const url = `${process.env.BACKEND_URL}/api/settings/released-year`;
+  return authedFetch(url, { method: "GET" });
+}
+
+export async function setReleasedYear(year: number): Promise<ActionResult<any>> {
+  const url = `${process.env.BACKEND_URL}/api/settings/released-year`;
+  return authedFetch(url, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ year }),
+  });
+}

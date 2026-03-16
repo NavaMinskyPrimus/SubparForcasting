@@ -5,11 +5,14 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Header } from "@/components/header";
-import { Plus, Calendar, Edit2, Save, X, Ban, CheckCircle } from "lucide-react";
+import { Plus, Calendar, Edit2, Save, X, Ban, CheckCircle, UserPlus } from "lucide-react";
 import { CURRENT_DATE, CURRENT_YEAR } from "@/lib/constants";
 import { setWindow } from "@/lib/settingsActions";
 import { fromZonedTime } from "date-fns-tz";
 import { addQuestion, deleteQuestion, editQuestion, invalidateQuestion, setResult, validateQuestion } from "@/lib/questionsActions";
+import { computeResults } from "@/lib/resultsActions";
+import { setReleasedYear as setReleasedYearAction } from "@/lib/settingsActions";
+import { makeAdmin, makeUser } from "@/lib/userActions";
 
 type Question = {
   id: number;
@@ -23,7 +26,13 @@ type LastYearQuestion = {
   isvalid: boolean;
 };
 
-export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing }: { rowsnext: any[], rowslast: any[],isAdmin: boolean, nextGame: number, playing: boolean }) {
+type User = {
+  email: string;
+  name?: string;
+  permission: string;
+};
+
+export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing, users, initialReleasedYear }: { rowsnext: any[], rowslast: any[], isAdmin: boolean, nextGame: number, playing: boolean, users: User[], initialReleasedYear: number }) {
   const data: Question[] = rowsnext.map(
   (val => ({id: val.questionid, text: val.text}))
   );
@@ -53,6 +62,16 @@ export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing }: { 
   const [validUpdateError, setValidUpdateError] =  useState<string | null>(null);
   const [resultUpdateStatus, setResultUpdateStatus] = useState<SaveStatus>("idle");
   const [resultUpdateError, setResultUpdateError] =   useState<string | null>(null);
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminEmailStatus, setAdminEmailStatus] =useState<SaveStatus>("idle");
+  const [adminEmailError, setAdminEmailError] = useState<string | null>(null);
+
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [adminSelectedFromList, setAdminSelectedFromList] = useState(false);
+  const [selectedUserPermission, setSelectedUserPermission] = useState<string | null>(null);
+  const [computeStatus, setComputeStatus] = useState<SaveStatus>("idle");
+  const [computeError, setComputeError] = useState<string | null>(null);
+  const [releasedYear, setReleasedYear] = useState(initialReleasedYear);
 
 
 
@@ -187,6 +206,48 @@ export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing }: { 
     })
   };
 
+  const filteredUsers = adminEmail.trim()
+    ? users.filter(u => u.email.toLowerCase().includes(adminEmail.toLowerCase()))
+    : [];
+
+  const handleAddAdmin = () => {
+    if (adminEmail.trim()) {
+      setAdminEmailStatus("saving");
+      startTransition(async () => {
+        const res = await makeAdmin(adminEmail);
+        if (!res.ok) {
+          setAdminEmailStatus("error");
+          setAdminEmailError(res.error ?? "Unknown error");
+          return;
+        }
+        setAdminEmailStatus("success");
+        setAdminEmail("");
+        setAdminSelectedFromList(false);
+        setSelectedUserPermission(null);
+        setTimeout(() => setAdminEmailStatus("idle"), 2000);
+      });
+    }
+  };
+
+  const handleRemoveAdmin = () => {
+    if (adminEmail.trim()) {
+      setAdminEmailStatus("saving");
+      startTransition(async () => {
+        const res = await makeUser(adminEmail);
+        if (!res.ok) {
+          setAdminEmailStatus("error");
+          setAdminEmailError(res.error ?? "Unknown error");
+          return;
+        }
+        setAdminEmailStatus("success");
+        setAdminEmail("");
+        setAdminSelectedFromList(false);
+        setSelectedUserPermission(null);
+        setTimeout(() => setAdminEmailStatus("idle"), 2000);
+      });
+    }
+  };
+
   const handleSetResult = (index: number, result: boolean) => {
     setResultUpdateStatus("saving")
     startTransition(async () => {
@@ -216,6 +277,85 @@ export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing }: { 
         </div>
 
         <div className="space-y-8">
+          {/* ADD ADMIN SECTION */}
+          <div>
+            <h2 className="text-3xl font-bold text-white mb-4">Change User Status</h2>
+            <Card className="bg-white/95 backdrop-blur shadow-xl">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <UserPlus className="w-5 h-5 text-blue-600" />
+                  Grant or Revoke Admin Access
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-gray-600">
+                  Enter an email address to change privilege levels
+                </p>
+                <div className="max-w-md relative">
+                  <label htmlFor="adminEmail" className="block text-sm font-medium text-gray-700 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    id="adminEmail"
+                    value={adminEmail}
+                    onChange={(e) => {
+                      setAdminEmail(e.target.value);
+                      setAdminSelectedFromList(false);
+                      setSelectedUserPermission(null);
+                      setShowUserDropdown(true);
+                    }}
+                    onFocus={() => setShowUserDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowUserDropdown(false), 150)}
+                    placeholder="user@example.com"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  />
+                  {showUserDropdown && filteredUsers.length > 0 && (
+                    <ul className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                      {filteredUsers.map((u) => (
+                        <li
+                          key={u.email}
+                          onMouseDown={() => {
+                            setAdminEmail(u.email);
+                            setAdminSelectedFromList(true);
+                            setSelectedUserPermission(u.permission);
+                            setShowUserDropdown(false);
+                          }}
+                          className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm text-gray-800"
+                        >
+                          {u.name && <span className="font-medium">{u.name} — </span>}
+                          {u.email}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+                {adminEmail.trim() && !adminSelectedFromList && (
+                  <p className="text-sm text-red-600">Please select a user from the list.</p>
+                )}
+                <div className="flex gap-3">
+                  {adminSelectedFromList && selectedUserPermission === 'user' && (
+                    <Button
+                      onClick={handleAddAdmin}
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                    >
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Grant Admin Access
+                    </Button>
+                  )}
+                  {adminSelectedFromList && selectedUserPermission === 'admin' && (
+                    <Button
+                      onClick={handleRemoveAdmin}
+                      className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white"
+                    >
+                      Remove Admin
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* NEXT YEAR SECTION */}
           <div>
             <h2 className="text-3xl font-bold text-white mb-4">Next Year ({nextGame})</h2>
@@ -466,6 +606,52 @@ export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing }: { 
                     </button>
                   </div>
                 )}
+                <div className="mb-4 flex gap-3">
+                  {releasedYear === nextGame - 2 && (
+                    <Button
+                      onClick={() => {
+                        setComputeStatus("saving");
+                        setComputeError(null);
+                        startTransition(async () => {
+                          const res = await computeResults(nextGame - 1);
+                          if (!res.ok) {
+                            setComputeStatus("error");
+                            setComputeError(res.error ?? "Unknown error");
+                            return;
+                          }
+                          setComputeStatus("success");
+                          setReleasedYear(nextGame - 1);
+                          setTimeout(() => setComputeStatus("idle"), 2000);
+                        });
+                      }}
+                      disabled={computeStatus === "saving"}
+                      className="bg-gradient-to-r from-[#228B22] to-blue-600 hover:from-[#1a6b1a] hover:to-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {computeStatus === "saving" ? "Computing..." : "Compute and Release Results"}
+                    </Button>
+                  )}
+                  {releasedYear === nextGame - 1 && (
+                    <Button
+                      onClick={() => {
+                        startTransition(async () => {
+                          const res = await setReleasedYearAction(releasedYear - 1);
+                          if (res.ok) setReleasedYear(releasedYear - 1);
+                        });
+                      }}
+                      className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white"
+                    >
+                      Hide Results
+                    </Button>
+                  )}
+                </div>
+
+                {computeStatus === "success" && (
+                  <p className="text-sm text-green-700 mb-4">Results computed and released successfully.</p>
+                )}
+                {computeStatus === "error" && (
+                  <p className="text-sm text-red-700 mb-4">Failed to compute results: {computeError}</p>
+                )}
+
                 {lastYearQuestions.length > 0 ? (
                   <div className="space-y-3">
                     {lastYearQuestions.map((q, index) => (
@@ -495,6 +681,7 @@ export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing }: { 
                           </div>
 
                           <div className="flex items-center gap-2">
+                            {releasedYear >= nextGame - 1 ? null : (<>
                             {q.isvalid && (
                               <>
                                 <Button
@@ -542,6 +729,7 @@ export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing }: { 
                                 Invalidate
                               </Button>
                             )}
+                            </>)}
                           </div>
                         </div>
                       </div>

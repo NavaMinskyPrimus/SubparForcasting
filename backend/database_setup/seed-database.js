@@ -30,10 +30,10 @@ async function seedDatabase(users = [], questions = [], answers = [], settings =
         // instsert settings
         if (settings.length > 0) {
             await client.query(
-                `INSERT INTO settings ("id", "questions_open", "questions_close")
-                VALUES ($1, $2, $3)
+                `INSERT INTO settings ("id", "questions_open", "questions_close", "released_year")
+                VALUES ($1, $2, $3, $4)
                 ON CONFLICT ("id") DO NOTHING`,
-                [true, settings[0], settings[1]]
+                [true, settings[0], settings[1], settings[2] ?? null]
             );
             console.log(`Inserted ${settings.length} settings`);
         }

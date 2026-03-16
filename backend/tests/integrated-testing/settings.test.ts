@@ -56,6 +56,49 @@ describe('Setting API Integration Tests', () => {
         expect(response_reset.body.open).toBe("2026-01-02T00:00:00.000Z");
         expect(response_reset.body.close).toBe("2026-01-09T00:00:00.000Z");
     });
+    it('should get released year', async () => {
+        const response = await request(app)
+            .get('/api/settings/released-year')
+            .expect(200);
+        expect(response.body.released_year).toBe(2010);
+    });
+    it('should fail to set released year', async () => {
+        await request(app)
+            .put('/api/settings/released-year')
+            .set('x-test-sub', 'sub1')
+            .send({ year: 2025 })
+            .expect(403);
+        await request(app)
+            .put('/api/settings/released-year')
+            .set('x-test-sub', 'sub3')
+            .send({ year: 'abc' })
+            .expect(400);
+        await request(app)
+            .put('/api/settings/released-year')
+            .set('x-test-sub', 'sub3')
+            .send({ year: -1 })
+            .expect(400);
+        await request(app)
+            .put('/api/settings/released-year')
+            .set('x-test-sub', 'sub3')
+            .send({})
+            .expect(400);
+    });
+    it('should set released year', async () => {
+        const response = await request(app)
+            .put('/api/settings/released-year')
+            .set('x-test-sub', 'sub3')
+            .send({ year: 2025 })
+            .expect(200);
+        expect(response.body.released_year).toBe(2025);
+        // restore
+        const restore = await request(app)
+            .put('/api/settings/released-year')
+            .set('x-test-sub', 'sub3')
+            .send({ year: 2010 })
+            .expect(200);
+        expect(restore.body.released_year).toBe(2010);
+    });
     it('should close the questions', async () =>{
         const today = new Date();
         const yesterday = new Date(today);

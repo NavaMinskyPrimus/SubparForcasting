@@ -3,8 +3,9 @@ import {auth} from "@/auth";
 import {redirect} from "next/navigation";
 import { checkAuth,isAdmin } from "@/lib/authInteractions";
 import { getQuestions } from "@/lib/questionsActions";
-import { getDates } from "@/lib/settingsActions";
+import { getDates, getReleasedYear } from "@/lib/settingsActions";
 import { CURRENT_DATE } from "@/lib/constants";
+import { getUsers } from "@/lib/userActions";
 
 export default async function Page() {
   checkAuth();
@@ -36,5 +37,13 @@ export default async function Page() {
     throw new Error(last_year_response.error);
   }
 
-  return <AdminPage rowsnext={questionsnew} rowslast={last_year_response.data} isAdmin={isa} nextGame={year} playing={playing}/>;
+  const users_response = await getUsers();
+  if(!users_response.ok){
+    throw new Error(users_response.error);
+  }
+  const released_year_response = await getReleasedYear();
+  if(!released_year_response.ok){
+    throw new Error(released_year_response.error);
+  }
+  return <AdminPage rowsnext={questionsnew} rowslast={last_year_response.data} isAdmin={isa} nextGame={year} playing={playing} users={users_response.data} initialReleasedYear={released_year_response.data.released_year}/>;
 }

@@ -75,6 +75,85 @@ describe('Users API Integration Tests', () => {
                 .expect(200);
             expect(response.body.name).toBe("Aba");
         });
+
+    describe('PUT /api/users/makeadmin', () => {
+        it('should fail for non-admin', async () => {
+            await request(app)
+                .put('/api/users/makeadmin')
+                .set('x-test-sub', 'sub1')
+                .send({ email: 'ima@gmail.com' })
+                .expect(403);
+        });
+        it('should fail for unknown email', async () => {
+            await request(app)
+                .put('/api/users/makeadmin')
+                .set('x-test-sub', 'sub3')
+                .send({ email: 'nobody@nowhere.com' })
+                .expect(404);
+        });
+        it('should fail for non-string email', async () => {
+            await request(app)
+                .put('/api/users/makeadmin')
+                .set('x-test-sub', 'sub3')
+                .send({ email: 123 })
+                .expect(403);
+        });
+        it('should promote Celine to admin', async () => {
+            const response = await request(app)
+                .put('/api/users/makeadmin')
+                .set('x-test-sub', 'sub3')
+                .send({ email: 'celine@place.org' })
+                .expect(200);
+            expect(response.body.permission).toBe('admin');
+            expect(response.body.name).toBe('Celine');
+        });
+        it('should restore Celine to user', async () => {
+            const response = await request(app)
+                .put('/api/users/makeuser')
+                .set('x-test-sub', 'sub3')
+                .send({ email: 'celine@place.org' })
+                .expect(200);
+            expect(response.body.permission).toBe('user');
+        });
+    });
+
+    describe('PUT /api/users/makeuser', () => {
+        it('should fail for non-admin', async () => {
+            await request(app)
+                .put('/api/users/makeuser')
+                .set('x-test-sub', 'sub1')
+                .send({ email: 'ima@gmail.com' })
+                .expect(403);
+        });
+        it('should fail for unknown email', async () => {
+            await request(app)
+                .put('/api/users/makeuser')
+                .set('x-test-sub', 'sub3')
+                .send({ email: 'nobody@nowhere.com' })
+                .expect(404);
+        });
+        it('should fail for non-string email', async () => {
+            await request(app)
+                .put('/api/users/makeuser')
+                .set('x-test-sub', 'sub3')
+                .send({ email: 123 })
+                .expect(403);
+        });
+        it('should promote Ima to admin then demote back to user', async () => {
+            await request(app)
+                .put('/api/users/makeadmin')
+                .set('x-test-sub', 'sub3')
+                .send({ email: 'ima@gmail.com' })
+                .expect(200);
+            const response = await request(app)
+                .put('/api/users/makeuser')
+                .set('x-test-sub', 'sub3')
+                .send({ email: 'ima@gmail.com' })
+                .expect(200);
+            expect(response.body.permission).toBe('user');
+            expect(response.body.name).toBe('Ima');
+        });
+    });
 });
 
 afterAll(async () => {
