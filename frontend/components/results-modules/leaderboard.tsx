@@ -89,7 +89,7 @@ export function LeaderboardModule({ year }: LeaderboardModuleProps) {
                     <RankCell rank={i + 1} />
                   </TableCell>
                   <TableCell>{entry['user name']}</TableCell>
-                  <TableCell className="font-medium">{entry.score?.toFixed(4)}</TableCell>
+                  <TableCell className="font-medium">{entry.score == null ? '-∞' : entry.score.toFixed(4)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
