@@ -14,5 +14,8 @@
     "backend:test": "cd backend && npm test",
     "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
     "clean": "rm -rf frontend/node_modules backend/node_modules node_modules"
+  },
+  "dependencies": {
+    "claude": "^0.1.1"
   }
 }

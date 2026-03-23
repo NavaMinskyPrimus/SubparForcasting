@@ -16,6 +16,7 @@
 export type ResultsModuleName = 'leaderboard' | 'confidence' | 'questions';
 
 export const YEAR_MODULES: Record<string, ResultsModuleName[]> = {
+  '2026': ['leaderboard', 'confidence', 'questions'],
   '2025': ['leaderboard', 'confidence', 'questions'],
   '2024': ['leaderboard', 'confidence'],
   '2023': ['leaderboard'],

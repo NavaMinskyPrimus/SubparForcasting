@@ -10,6 +10,7 @@ import { QuestionsModule } from './questions';
 
 export interface ResultsModuleProps {
   year: string;
+  confidenceData?: { 'user name': string; confidence: number | null }[];
 }
 
 export const MODULE_REGISTRY: Record<ResultsModuleName, ComponentType<ResultsModuleProps>> = {
