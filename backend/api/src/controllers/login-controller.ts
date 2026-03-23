@@ -1,4 +1,4 @@
-import { getUserBySub, postUser } from '../../../database/user-queries';
+import { addSubToUser, getUserByEmail, getUserBySub, postUser } from '../../../database/user-queries';
 import type { Request, Response } from "express";
 
 export async function handleLogin(req: Request, res: Response) {
@@ -16,6 +16,12 @@ export async function handleLogin(req: Request, res: Response) {
         const email = req.body?.email;
         if(name == null || email == null || name == undefined || email == undefined){
             return res.status(400).json({err: "name and email are requiered"});
+        }
+        const user_email = await getUserByEmail(email);
+        if(user_email != null){
+            console.log("updating sub-less user");
+            const updated_user = await addSubToUser(name,email, "user", sub);
+            return res.status(200).json(updated_user);
         }
         console.log("returning new user");
 

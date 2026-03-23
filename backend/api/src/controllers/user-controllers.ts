@@ -63,22 +63,26 @@ export async function handlePostUser(req: Request, res: Response) {
         const sub = req.body?.sub;
         const nothing = [undefined, null]
         if((permission != "user" && permission != "admin")){
-             res.status(400).json({ err: "permission must be user or admin" });
+            console.error("handlePostUser: permission must be user or admi")
+            return res.status(400).json({ err: "permission must be user or admin" });
         }
-        if((nothing.includes(name)) || (nothing.includes(email)) || nothing.includes(sub)){
-            res.status(400).json({ err: "null/undefined param" });
+        if((nothing.includes(name)) || (nothing.includes(email))){
+            console.error("handlePostUser: null/undefined param")
+            return res.status(400).json({ err: "null/undefined param" });
         }
         const id : number = req.body.userid;
         if (!req.auth?.sub) {
+            console.error("handlePostUser: Authentication required")
             return res.status(401).json({ err: 'Authentication required' });
         }
         const current_sub = req.auth.sub;
         const currentUser = await getUserBySub(current_sub);
         if(!currentUser){
-            console.error("handlePostUser: user not found")
+            console.error("handlePostUser: current user not found")
             return res.status(404).json({ err: 'current user not found' });
         }
         if(currentUser.permission != "admin"){
+            console.error("handlePostUser: only admins can post users")
             return res.status(403).json({err: 'only admins can post users'})
         }
         const newUser = await postUser(name, email, permission,sub);

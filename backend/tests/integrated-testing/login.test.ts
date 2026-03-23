@@ -22,6 +22,33 @@ describe('Answers API Integration Tests', () => {
                 .send({name: "Test User", email: null, sub: "sub"})
                 .expect(400);
         });
+        it('should add sub to existing sub-less user on login', async () => {
+            // Create a user with no sub via admin API
+            const createResponse = await request(app)
+                .post('/api/users')
+                .set("x-test-sub", "sub3")
+                .send({ name: "Legacy User", email: "legacy@test.org", permission: "user", sub: null })
+                .expect(200);
+            const id = createResponse.body.userid;
+            expect(createResponse.body.sub).toBeNull();
+
+            // Log in as that user — should trigger addSubToUser path
+            const loginResponse = await request(app)
+                .put('/api/login')
+                .send({ name: "Legacy User", email: "legacy@test.org", sub: "legacysub99" })
+                .expect(200);
+            expect(loginResponse.body.email).toBe("legacy@test.org");
+            expect(loginResponse.body.sub).toBe("legacysub99");
+            expect(loginResponse.body.userid).toBe(id);
+
+            // Clean up
+            const deletedResponse = await request(app)
+                .delete('/api/users')
+                .set("x-test-sub", "sub3")
+                .send({ userid: id })
+                .expect(200);
+            expect(deletedResponse.body.userid).toBe(id);
+        });
         it('should log in new user', async () => {
             const response = await request(app)
                 .put('/api/login')

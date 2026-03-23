@@ -24,7 +24,7 @@ export async function postUser(
   name: string,
   email: string,
   permission: 'admin' | 'user',
-  sub: string
+  sub: string | null
 ) {
   const query = `
     INSERT INTO public."users" (name, email, permission,sub)
@@ -43,6 +43,21 @@ export async function postUser(
   return res.rows[0];
 }
 
+export async function addSubToUser(
+  name: string,
+  email: string,
+  permission: 'admin' | 'user',
+  sub: string
+) {
+  const res = await pool.query(
+  `UPDATE public."users"                                                                                                      
+    SET name = $1, sub = $3, permission = $4
+    WHERE email = $2                                                                                                           
+    RETURNING *;`,
+    [name, email, sub, permission]
+  );     
+  return res.rows[0];                    
+}
 
 export async function deleteUserWithAssociatedAnswers(userid: number) {
   const client: PoolClient = await pool.connect();
@@ -51,6 +66,10 @@ export async function deleteUserWithAssociatedAnswers(userid: number) {
     await client.query("BEGIN");
     await client.query(
       `DELETE FROM public."answers" WHERE userid = $1`,
+      [userid]
+    );
+    await client.query(
+      `DELETE FROM public."results" WHERE userid = $1`,
       [userid]
     );
     const user = await client.query(

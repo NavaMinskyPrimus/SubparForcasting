@@ -1,6 +1,6 @@
 require('dotenv').config();
 import { pool } from './../../database/pool';
-import {deleteUserWithAssociatedAnswers, getUserByID, getUsers, postUser} from '../../database/user-queries';
+import {addSubToUser, deleteUserWithAssociatedAnswers, getUserByID, getUsers, postUser} from '../../database/user-queries';
 
 afterAll(async () => {
   await pool.end();
@@ -29,5 +29,24 @@ describe('Database CRUD tests for user queries', () => {
         expect(user.permission).toBe('user');
         const users = await getUsers();
         expect(users.length).toBe(3);
+    });
+});
+
+describe('addSubToUser', () => {
+    let id: number;
+    it('should add a sub to a sub-less user', async () => {
+        const inserted = await postUser("No Sub User", "nosub@test.org", "user", null);
+        id = inserted.userid;
+        expect(inserted.sub).toBeNull();
+
+        const updated = await addSubToUser("No Sub User", "nosub@test.org", "user", "newuniquesub");
+        expect(updated.userid).toBe(id);
+        expect(updated.sub).toBe("newuniquesub");
+        expect(updated.email).toBe("nosub@test.org");
+    });
+    it('should clean up the sub-less user', async () => {
+        const deleted = await deleteUserWithAssociatedAnswers(id);
+        expect(deleted.userid).toBe(id);
+        expect(deleted.email).toBe("nosub@test.org");
     });
 });

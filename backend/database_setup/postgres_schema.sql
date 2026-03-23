@@ -7,7 +7,7 @@ CREATE TABLE users (
   "name" VARCHAR(200) NOT NULL,
   "email" VARCHAR(200) NOT NULL,
   "permission" user_permission NOT NULL DEFAULT 'user',
-  "sub" VARCHAR(200) NOT NULL,
+  "sub" VARCHAR(200),
   CONSTRAINT users_sub_unique UNIQUE ("sub"),
   CONSTRAINT users_email_unique UNIQUE ("email")
 );

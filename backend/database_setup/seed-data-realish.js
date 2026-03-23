@@ -15,7 +15,7 @@ const users = [
         name: 'Nava Minsky-Primus',
         email: 'navaminskyprimus@gmail.com',
         permission: "user",
-        sub: "110777475506280898690"
+        sub: null
     },
 ];
 
@@ -33,7 +33,7 @@ const questions = [
         questionid: 2,
         text: 'Will it rain in New Haven on New Years Day',
         year: 2026,
-        result: true,
+        result: false,
         isvalid: true
     },
     {
@@ -87,22 +87,22 @@ const answers = [
     {
         userid: 2,
         questionid: 1,
-        probability: 5
+        probability: 69
     },
     {
         userid: 2,
         questionid: 2,
-        probability: 60
+        probability: 55
     },
     {
         userid: 2,
         questionid: 3,
-        probability: 25
+        probability: 40
     },
     {
         userid: 1,
         questionid: 4,
-        probability: 99
+        probability: 60
     },
 ];
 

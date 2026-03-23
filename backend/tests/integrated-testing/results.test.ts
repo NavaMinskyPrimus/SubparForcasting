@@ -199,6 +199,7 @@ describe('Results API Integration Tests', () => {
             await pool.query(
                 `UPDATE results SET confidence = null, score = null WHERE userid = 1 AND year = 2011`
             );
+            await pool.query(`UPDATE settings SET released_year = 2010`);
             const results = await request(app)
                 .get('/api/results')
                 .set('x-test-sub', 'sub1')
