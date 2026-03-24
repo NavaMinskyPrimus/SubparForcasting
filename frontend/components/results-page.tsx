@@ -8,7 +8,7 @@ import { YEAR_MODULES } from '@/lib/results-config';
 import { MODULE_REGISTRY } from '@/components/results-modules';
 import { FIRST_GAME } from '@/lib/constants';
 
-export function ResultsPage({ releasedYear }: { releasedYear: number }) {
+export function ResultsPage({ releasedYear, isAdmin }: { releasedYear: number , isAdmin: boolean}) {
   const years = Array.from(
     { length: releasedYear - FIRST_GAME + 1 },
     (_, i) => String(releasedYear - i)
@@ -20,7 +20,7 @@ export function ResultsPage({ releasedYear }: { releasedYear: number }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-      <Header isAdmin={true} />
+      <Header isAdmin={isAdmin} />
       <div className="p-4 md:p-8">
         <div className="max-w-6xl mx-auto space-y-8">
           <div className="text-center space-y-4">

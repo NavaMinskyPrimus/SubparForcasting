@@ -32,18 +32,21 @@ function cspaceToPspace(n: number): number {
 
 function confAdjustedScore(
   answers: Array<{ p: number; outcome: boolean }>,
-  confMult: number
+  confMult: number,
+  totalQuestions: number
 ): number {
   const sum = answers.reduce((acc, { p, outcome }) => {
     const normalizedProb = outcome ? p : 1 - p;
     const adjustedP = cspaceToPspace(confMult * pspaceToCspace(normalizedProb));
     return acc + scoreOfNormalizedProb(adjustedP);
   }, 0);
-  return sum / answers.length;
+  // Unanswered questions count as 50/50 (score = 0), so divide by total questions
+  return sum / totalQuestions;
 }
 
 function bestScale(
   answers: Array<{ p: number; outcome: boolean }>,
+  totalQuestions: number,
   min = -10,
   max = 10,
   granularity = 0.01
@@ -53,7 +56,7 @@ function bestScale(
   let bestScore = -Infinity;
   for (let i = 0; i < numSteps; i++) {
     const confMult = i * granularity + min;
-    const score = confAdjustedScore(answers, confMult);
+    const score = confAdjustedScore(answers, confMult, totalQuestions);
     if (score > bestScore) {
       bestScore = score;
       bestMult = confMult;
@@ -120,8 +123,9 @@ export async function handleComputeResults(req: Request, res: Response) {
 
       if (scoreable.length === 0) continue;
 
-      const rawScore = confAdjustedScore(scoreable, 1);
-      const confidence = bestScale(scoreable);
+      const totalQuestions = resolvedQuestions.length;
+      const rawScore = confAdjustedScore(scoreable, 1, totalQuestions);
+      const confidence = bestScale(scoreable, totalQuestions);
 
       const saved = await upsertResult(user.userid, user.name, year, confidence, rawScore);
       savedResults.push(saved);

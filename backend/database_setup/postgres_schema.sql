@@ -30,7 +30,7 @@ CREATE TABLE questions (
 CREATE TABLE answers (
     "userid" INTEGER NOT NULL,
     "questionid" INTEGER NOT NULL,
-    "probability" INTEGER,
+    "probability" FLOAT,
     PRIMARY KEY ("userid", "questionid"),
     FOREIGN KEY ("userid") REFERENCES "users"("userid"),
     FOREIGN KEY ("questionid") REFERENCES "questions"("questionid"),
