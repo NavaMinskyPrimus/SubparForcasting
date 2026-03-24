@@ -15,11 +15,11 @@ describe('Answers API Integration Tests', () => {
         it('should fail in a few ways', async () => {
             await request(app)
                 .put('/api/login')
-                .send({name: "Test User"})
+                .send({name: "login-integrated Test User 2"})
                 .expect(400);
             await request(app)
                 .put('/api/login')
-                .send({name: "Test User", email: null, sub: "sub"})
+                .send({name: "login-integrated Test User 2", email: null, sub: "sub"})
                 .expect(400);
         });
         it('should add sub to existing sub-less user on login', async () => {
@@ -52,23 +52,23 @@ describe('Answers API Integration Tests', () => {
         it('should log in new user', async () => {
             const response = await request(app)
                 .put('/api/login')
-                .send({name: "Test User", email: "test@user.org", sub: "sub4"})
+                .send({name: "login-integrated Test User 1", email: "test@user.org", sub: "newsub"})
                 .expect(200);
             console.log(response.body)
-            expect(response.body.name).toBe("Test User");
+            expect(response.body.name).toBe("login-integrated Test User 1");
             const id = response.body.userid
             const userresponse = await request(app)
                 .get(`/api/users/${id}`)
                 .expect(200);
             expect(userresponse.body.email).toBe("test@user.org")
-            expect(userresponse.body.sub).toBe("sub4")
+            expect(userresponse.body.sub).toBe("newsub")
             const deletedresponse = await request(app)
                 .delete('/api/users')
                 .set("x-test-sub", "sub3")
                 .send({ userid: id })
                 .expect(200);
             expect(deletedresponse.body.email).toBe("test@user.org")
-            expect(deletedresponse.body.sub).toBe("sub4")
+            expect(deletedresponse.body.sub).toBe("newsub")
         });
     });
 });

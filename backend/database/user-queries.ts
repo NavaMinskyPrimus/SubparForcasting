@@ -26,21 +26,30 @@ export async function postUser(
   permission: 'admin' | 'user',
   sub: string | null
 ) {
-  const query = `
-    INSERT INTO public."users" (name, email, permission,sub)
-    VALUES ($1, $2, $3, $4)
-    ON CONFLICT (sub)
-    DO UPDATE SET
-      name = EXCLUDED.name,
-      email = EXCLUDED.email,
-      permission = EXCLUDED.permission
-    RETURNING *;
-  `;
-  
-  const values = [name, email, permission, sub];
-  const res = await pool.query(query, values)
-  
-  return res.rows[0];
+  try {
+    const res = await pool.query(`
+      INSERT INTO public."users" (name, email, permission, sub)
+      VALUES ($1, $2, $3, $4)
+      ON CONFLICT (sub) DO UPDATE SET
+        name = EXCLUDED.name,
+        email = EXCLUDED.email,
+        permission = EXCLUDED.permission
+      RETURNING *;
+    `, [name, email, permission, sub]);
+    return res.rows[0];
+  } catch (err: any) {
+    if (err.constraint === 'users_email_unique') {
+      console.log("here")
+      const res = await pool.query(`
+        UPDATE public."users"
+        SET name = $1, sub = $3, permission = $4
+        WHERE email = $2
+        RETURNING *;
+      `, [name, email, sub, permission]);
+      return res.rows[0];
+    }
+    throw err;
+  }
 }
 
 export async function addSubToUser(

@@ -24,6 +24,13 @@ const users = [
         permission: "admin",
         sub: "sub3"
     },
+    {
+        userid: 4,
+        name: 'Averagy',
+        email: "Averagy@mcaverageface.org",
+        permission: "user",
+        sub: "sub4"
+    },
 ];
 
 const questions = [

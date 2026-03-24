@@ -1,12 +1,41 @@
 
 import { pool } from './pool';
 import type { PoolClient } from "pg";
+import { getQuestionsByYear } from './question-queries';
 
 export async function deleteAnswersByUID(userid: number){
   const query = `DELETE from public."answers" WHERE userid = $1 RETURNING *`;
   const value = [userid]
   const res = await pool.query(query, value);
   return res.rows;
+}
+
+export async function addAveragy(year: number){
+  const client: PoolClient = await pool.connect();
+  const questions = await getQuestionsByYear(year);
+  try{
+    await client.query("BEGIN");
+    for(const q of questions){
+      const avg = (arr : number[]) => arr.reduce((sum, x) => sum + x, 0) / arr.length;
+      const raw_answers = await getAnswersByQID(q.questionid);
+      const probabilities = raw_answers.map((a : Answer) => a.probability);
+      const average = avg(probabilities);
+      const query = `
+        INSERT INTO public."answers" (userid, questionid, probability)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (userid, questionid)
+        DO UPDATE SET
+          probability = EXCLUDED.probability
+        RETURNING *;
+      `;
+      await client.query(query, [4, q.questionid, average]);
+    }
+  }catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  }finally{
+    client.release();
+  }
 }
 
 export async function deleteAnswer(userid: number,questionid: number){

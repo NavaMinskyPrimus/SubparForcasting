@@ -2,3 +2,4 @@
 *package-lock.json
 *.env
 frontend/.next
+backend/tests/test-results.txt 

@@ -2,6 +2,7 @@ import 'dotenv/config';
 import request from 'supertest';
 import { app } from "../../server";
 import { pool } from "../../database/pool";
+import { describe } from 'node:test';
 
 describe('Users API Integration Tests', () => {
     let id : number; 
@@ -10,15 +11,15 @@ describe('Users API Integration Tests', () => {
             const response = await request(app)
                 .get('/api/users')
                 .expect(200);
-            expect(response.body.length).toBe(3);
+            expect(response.body.length).toBe(4);
         });
         it('should add a user', async () => {
             const response = await request(app)
                 .post('/api/users')
                 .set("x-test-sub", "sub3")
-                .send({name: "Test User", email: "test@user.org", permission: "user", sub: "testsub"})
+                .send({name: "user-integrated Test User 1", email: "test@user.org", permission: "user", sub: "testsub"})
                 .expect(200);
-            expect(response.body.name).toBe("Test User");
+            expect(response.body.name).toBe("user-integrated Test User 1");
             id = response.body.userid
         });
         it('should fail to remove a user', async () => {
@@ -39,9 +40,9 @@ describe('Users API Integration Tests', () => {
             const response = await request(app)
                 .post('/api/users')
                 .set("x-test-sub", "sub3")
-                .send({name: "Test User", email: "test@user.org", permission: "user", sub: "testsub"})
+                .send({name: "user-integrated Test User 2", email: "test@user.org", permission: "user", sub: "testsub"})
                 .expect(200);
-            expect(response.body.name).toBe("Test User");
+            expect(response.body.name).toBe("user-integrated Test User 2");
             id = response.body.userid
             const userresponse = await request(app)
                 .get(`/api/users/${id}`)
@@ -53,7 +54,7 @@ describe('Users API Integration Tests', () => {
             const response = await request(app)
                 .post('/api/users')
                 .set("x-test-sub", "sub3")
-                .send({name: "Test User", email: "other-email@user.org", permission: "user", sub: "testsub"})
+                .send({name: "user-integrated Test User 3", email: "other-email@user.org", permission: "user", sub: "testsub"})
                 .expect(200);
             expect(response.body.email).toBe("other-email@user.org");
             const userresponse = await request(app)

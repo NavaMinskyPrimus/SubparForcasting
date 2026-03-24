@@ -81,13 +81,13 @@ describe('Database CRUD tests for user queries', () => {
     describe('deleteAnswersByUID tests', () => {
         let uid: number;
         it('should post a new user', async () => {
-            const user1 = await postUser("Test User", "test@user.com", "admin", "testsub");
+            const user1 = await postUser("answer crud Test User", "test@user.com", "admin", "testsub");
             uid = user1.userid;
             const user2 = await getUserByID(uid);
             expect(user2.userid).toBe(uid);           // or user.user_id
             expect(user2.email).toBe('test@user.com');
             expect(user2.permission).toBe('admin');
-            expect(user2.name).toBe('Test User');
+            expect(user2.name).toBe('answer crud Test User');
         });
         it('should add answers for that user', async () => {
             await postAnswer(uid, 1, 10);

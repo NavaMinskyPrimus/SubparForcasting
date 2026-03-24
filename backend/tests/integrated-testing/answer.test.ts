@@ -28,7 +28,7 @@ describe('Answers API Integration Tests', () => {
                 .expect(404);
             await request(app)
                 .post('/api/answers/one')
-                .set("x-test-sub", "sub4")
+                .set("x-test-sub", "new sub")
                 .send({probability: 10, questionid: 1})
                 .expect(404);
         });
@@ -73,7 +73,7 @@ describe('Answers API Integration Tests', () => {
                 .expect(404);
             await request(app)
                 .post('/api/answers/many')
-                .set("x-test-sub", "sub4")
+                .set("x-test-sub", "new sub")
                 .send({answers:[{probability: 10, questionid: 1}]})
                 .expect(404);
         });
@@ -81,7 +81,7 @@ describe('Answers API Integration Tests', () => {
             user_result = await request(app)
                 .post('/api/users')
                 .set("x-test-sub", "sub3")
-                .send({name: "Test User", email: "test@user.org", permission: "user", sub: "testsub"})
+                .send({name: "answers-integrated Test User 1", email: "test@user.org", permission: "user", sub: "testsub"})
                 .expect(200);
             expect(user_result.body.email).toBe("test@user.org");
             const id = user_result.body.userid
