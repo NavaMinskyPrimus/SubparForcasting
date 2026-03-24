@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { getUserBySub, getUsers } from '../../../database/user-queries';
 import { getQuestionsByYear } from '../../../database/question-queries';
 import type { Question } from '../../../database/question-queries';
-import { getAnswersByUID } from '../../../database/answer-queries';
+import { addAveragy, getAnswersByUID } from '../../../database/answer-queries';
 import type { Answer } from '../../../database/answer-queries';
 import { upsertResult, getResultsByYear } from '../../../database/results-queries';
 import { getSettings, setReleasedYear } from '../../../database/settings-queries';
@@ -87,7 +87,7 @@ export async function handleComputeResults(req: Request, res: Response) {
     if (year == null || typeof year !== 'number' || !Number.isInteger(year) || year <= 0) {
       return res.status(400).json({ err: 'year must be a positive integer' });
     }
-
+    await addAveragy(year);
     const allQuestions = (await getQuestionsByYear(year)) as Question[];
 
     // Every active (valid) question must be resolved before scoring

@@ -30,6 +30,7 @@ export async function addAveragy(year: number){
       `;
       await client.query(query, [4, q.questionid, average]);
     }
+    await client.query("COMMIT");
   }catch (err) {
     await client.query("ROLLBACK");
     throw err;

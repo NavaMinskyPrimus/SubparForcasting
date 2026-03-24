@@ -105,8 +105,9 @@ describe('Results API Integration Tests', () => {
                 .send({ year: 2010 })
                 .expect(200);
             expect(Array.isArray(response.body)).toBe(true);
-            // both Celine (p=10, true) and Ima (p=90, true) have 2010 answers
-            expect(response.body.length).toBe(2);
+            // both Celine (p=10, true) and Ima (p=90, true) have 2010 answers as well as averagy (p=50)
+            expect(response.body.length).toBe(3);
+            console.log(response.body)
             const celine = response.body.find((r: any) => r.userid === 1);
             expect(celine).toBeDefined();
             expect(celine['user name']).toBe('Celine');
@@ -123,19 +124,21 @@ describe('Results API Integration Tests', () => {
             expect(ima.confidence).toBeCloseTo(9.99, 2);
         });
 
-        it('GET should reflect 2010 scores', async () => {
+        it('GET should reflect 2010 scores with addition of averagy', async () => {
             const response = await request(app)
                 .get('/api/results')
                 .set('x-test-sub', 'sub1')
                 .query({ year: 2010 })
                 .expect(200);
-            expect(response.body.length).toBe(2);
+            expect(response.body.length).toBe(3);
             const celine = response.body.find((r: any) => r.userid === 1);
             expect(celine).toBeDefined();
             expect(celine.score).toBeCloseTo(-1.6094379124341003, 5);
             const ima = response.body.find((r: any) => r.userid === 2);
             expect(ima).toBeDefined();
             expect(ima.score).toBeCloseTo(0.5877866649021191, 5);
+            const averagy =  response.body.find((r: any) => r.userid === 4)
+            expect(averagy.score).toBeCloseTo(0, 5);
         });
     });
 
@@ -164,7 +167,7 @@ describe('Results API Integration Tests', () => {
                 .send({ year: 2011 })
                 .expect(200);
             expect(Array.isArray(response.body)).toBe(true);
-            expect(response.body.length).toBe(1);
+            expect(response.body.length).toBe(2);
             const celine = response.body.find((r: any) => r.userid === 1);
             expect(celine).toBeDefined();
             expect(celine['user name']).toBe('Celine');
@@ -200,6 +203,8 @@ describe('Results API Integration Tests', () => {
                 `UPDATE results SET confidence = null, score = null WHERE userid = 1 AND year = 2011`
             );
             await pool.query(`UPDATE settings SET released_year = 2010`);
+            await pool.query(`DELETE FROM public."answers" WHERE userid = 4`);
+            await pool.query(`DELETE FROM public."results" WHERE userid = 4`);
             const results = await request(app)
                 .get('/api/results')
                 .set('x-test-sub', 'sub1')
