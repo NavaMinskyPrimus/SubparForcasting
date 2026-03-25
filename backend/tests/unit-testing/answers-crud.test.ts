@@ -14,7 +14,7 @@ describe('Database CRUD tests for user queries', () => {
     let id : number;
     describe('basic tests', () => {
         it('should get all answers for user 2', async () => {
-            const answers = await getAnswersByUID(1);
+            const answers = await getAnswersByUID(4);
             expect(answers).toBeDefined();
             expect(Array.isArray(answers)).toBe(true);
             const questionids = answers.map((answer: any) => answer.questionid);
@@ -26,7 +26,7 @@ describe('Database CRUD tests for user queries', () => {
             expect(answers).toBeDefined();
             expect(Array.isArray(answers)).toBe(true);
             const userids = answers.map((answer: any) => answer.userid);
-            expect(userids).toContain(1);
+            expect(userids).toContain(4);
             expect(userids).toContain(2);
         })
         it('should post an answer', async () => {
@@ -56,25 +56,25 @@ describe('Database CRUD tests for user queries', () => {
         it('should add multiple answers', async() =>{
             const answers = [
             { userid: 2, questionid: 2, probability: 49 },
-            { userid: 1, questionid: 1, probability: 50 },
+            { userid: 4, questionid: 1, probability: 50 },
             ];
             const added = await postAnswers(answers);
             expect(added.length).toBe(2);
             const answer1 = added.find(a => a.userid === 2 && a.questionid === 2);
-            const answer2 = added.find(a => a.userid === 1 && a.questionid === 1);
+            const answer2 = added.find(a => a.userid === 4 && a.questionid === 1);
             expect(answer1).toBeDefined();
             expect(answer2).toBeDefined();
             const check1 = await checkAnswer(2,2);
             expect(check1).toBeDefined()
             expect(check1).not.toBe(null)
             expect(check1.probability).toBe(49)
-            const check2 = await checkAnswer(1,1);
+            const check2 = await checkAnswer(4,1);
             expect(check2).toBeDefined()
             expect(check2.probability).toBe(50)
         });
         it('should reset data', async () => {
             const removed = await deleteAnswer(2,2);
-            const added = await postAnswers([{ userid: 1, questionid: 1, probability: 10 }]);
+            const added = await postAnswers([{ userid: 4, questionid: 1, probability: 10 }]);
 
         })
     });

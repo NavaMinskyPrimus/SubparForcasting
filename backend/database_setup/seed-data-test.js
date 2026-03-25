@@ -4,11 +4,11 @@ const { seedDatabase } = require('./seed-database');
 
 const users = [
     {
-        userid: 1,
+        userid: 4,
         name: 'Celine',
         email: "celine@place.org",
         permission: "user",
-        sub: "sub1"
+        sub: "sub4"
     },
     {
         userid: 2,
@@ -25,11 +25,11 @@ const users = [
         sub: "sub3"
     },
     {
-        userid: 4,
+        userid: 1,
         name: 'Averagy',
         email: "Averagy@mcaverageface.org",
         permission: "user",
-        sub: "sub4"
+        sub: "sub1"
     },
 ];
 
@@ -60,12 +60,12 @@ const settings = ['2026-01-02T00:00:00Z','2026-01-09T00:00:00Z', 2010]
 
 const answers = [
     {
-        userid: 1,
+        userid: 4,
         questionid: 1,
         probability: 10 
     },
     {
-        userid: 1,
+        userid: 4,
         questionid: 2,
         probability: 99 
     },
@@ -75,15 +75,16 @@ const answers = [
         probability: 90
     },
     {
-        userid: 1,
+        userid: 4,
         questionid: 3,
         probability: 1
     },
+
 ];
 
 const results = [
     {
-        userid: 1,
+        userid: 4,
         userName: "Celine",
         year: 2010,
         confidence: -10,
@@ -97,7 +98,7 @@ const results = [
         score: 0.5877866649021191
     },
     {
-        userid: 1,
+        userid: 4,
         userName: "Celine",
         year: 2011,
         confidence: null,

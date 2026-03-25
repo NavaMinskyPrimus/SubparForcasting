@@ -20,7 +20,7 @@ export async function handleLogin(req: Request, res: Response) {
         const user_email = await getUserByEmail(email);
         if(user_email != null){
             console.log("updating sub-less user");
-            const updated_user = await addSubToUser(name,email, "user", sub);
+            const updated_user = await addSubToUser(name,email, user_email.permission, sub);
             return res.status(200).json(updated_user);
         }
         console.log("returning new user");

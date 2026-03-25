@@ -112,7 +112,6 @@ export async function handleComputeResults(req: Request, res: Response) {
 
     for (const user of users) {
       const userAnswers = (await getAnswersByUID(user.userid)) as Answer[];
-
       // Pair each answer with the question outcome (skip unanswered/unresolved)
       const scoreable = userAnswers
         .filter((a) => resolvedQMap.has(a.questionid))

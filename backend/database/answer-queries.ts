@@ -20,6 +20,9 @@ export async function addAveragy(year: number){
       const raw_answers = await getAnswersByQID(q.questionid);
       const probabilities = raw_answers.map((a : Answer) => a.probability);
       const average = avg(probabilities);
+      if(average == 100){
+        console.log(raw_answers)
+      }
       const query = `
         INSERT INTO public."answers" (userid, questionid, probability)
         VALUES ($1, $2, $3)
@@ -28,7 +31,7 @@ export async function addAveragy(year: number){
           probability = EXCLUDED.probability
         RETURNING *;
       `;
-      await client.query(query, [4, q.questionid, average]);
+      await client.query(query, [1, q.questionid, average]);
     }
     await client.query("COMMIT");
   }catch (err) {

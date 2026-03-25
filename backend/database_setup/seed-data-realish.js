@@ -142,17 +142,14 @@ const questions = [
     { questionid: 8,  text: 'Bibi becomes Prime Minister of Israel again, after the 5th election since April 2019',                                                                                                                                                                 year: 2021, result: false, isvalid: true  },
     { questionid: 9,  text: 'Bibi is indicted (for anything)',                                                                                                                                                                                                                      year: 2021, result: null,  isvalid: false },
     { questionid: 10, text: 'Biden ends the year with his approval rating higher than his disapproval rating (measured by 538)',                                                                                                                                                     year: 2021, result: false, isvalid: true  },
-    { questionid: 11, text: 'Boris Johnson\'s father will be granted French ciizenship.',                                                                                                                                                                                           year: 2021, result: null,  isvalid: false },
     { questionid: 12, text: 'By October 1st, Whole Foods no longer has social distancing stickers on the floor (measured at the NYC store on Columbus Ave)',                                                                                                                        year: 2021, result: false, isvalid: true  },
     { questionid: 13, text: 'By executive action, the Biden administration relieves some, but not all, student debt',                                                                                                                                                               year: 2021, result: false, isvalid: true  },
     { questionid: 14, text: 'Camp Ramah in the Berkshires is open and at capacity all summer',                                                                                                                                                                                      year: 2021, result: true,  isvalid: true  },
-    { questionid: 15, text: 'Harvard beats Yale at the annual regata on the Thames River in New London.',                                                                                                                                                                           year: 2021, result: false, isvalid: true  },
     { questionid: 16, text: 'Lakers win the NBA Championship.',                                                                                                                                                                                                                     year: 2021, result: false, isvalid: true  },
     { questionid: 17, text: 'Major legislation gets through Congress and is signed into law on at least one of the following: infrastructure, healthcare (not including covid relief), climate change, election law, tax law. Richard Primus to adjuticate the meaning of "major"',  year: 2021, result: true,  isvalid: true  },
     { questionid: 18, text: 'New York State starts vaccinating ordinary healthy people by April 1st',                                                                                                                                                                               year: 2021, result: false, isvalid: true  },
     { questionid: 19, text: 'No court has ordered to break up Facebook, Facebook Messenger, Instagram, and/or Whatsapp',                                                                                                                                                            year: 2021, result: true,  isvalid: true  },
     { questionid: 20, text: 'No more than one major bill from the above list gets through Congress and signed into law in 2021.',                                                                                                                                                    year: 2021, result: false, isvalid: true  },
-    { questionid: 21, text: 'The Boeing 737 Max will fly in 2021 without accident',                                                                                                                                                                                                 year: 2021, result: true,  isvalid: true  },
     { questionid: 22, text: 'The Dune remake wins a 2021 Oscar (any category).',                                                                                                                                                                                                    year: 2021, result: null,  isvalid: false },
     { questionid: 23, text: 'The Friends Reunion comes out in December as planned, and Ross and Rachel finally get married.',                                                                                                                                                        year: 2021, result: false, isvalid: true  },
     { questionid: 24, text: 'The biggest US forest fire of 2021 is bigger than any previous forest fire in the 21st century, as measured by square miles.',                                                                                                                         year: 2021, result: false, isvalid: true  },
@@ -286,7 +283,8 @@ const questions = [
 ];
 
 const results = [
-    // 2021 results
+    // 2021 
+    { userid : 1, userName: 'Averagey McAverageFace', year: 2021, confidence: 0.15000000000000036, score: -0.02621402038791153},
     { userid: 3,  userName: 'Sema Stein',        year: 2021, confidence: -0.27999999999999936,   score: -Infinity              },
     { userid: 4,  userName: 'Jess Tytell',        year: 2021, confidence: -10,                    score: -1.8325814637483107    },
     { userid: 5,  userName: 'Tova Ovadia',        year: 2021, confidence: -0.5499999999999989,    score: -Infinity              },
@@ -309,6 +307,7 @@ const results = [
     { userid: 22, userName: 'Michelle Fisher',    year: 2021, confidence: 0.20000000000000107,    score: 0.15813476465184662    },
     { userid: 23, userName: 'Jeremy Dauber',      year: 2021, confidence: 9.990000000000002,      score: 0.18232155679395456    },
     // 2022 results
+    { userid: 1,  userName: 'Averagey McAverageFace',  year: 2022, confidence: 0.990000000000002,    score: 0.18020633628483523   },
     { userid: 2,  userName: 'Nava Minsky-Primus',  year: 2022, confidence: 0.0600000000000005,    score: -0.16356989847472558   },
     { userid: 6,  userName: 'Romana Primus',        year: 2022, confidence: 0.6300000000000008,    score: 0.0924757060241298     },
     { userid: 7,  userName: 'Naftaly Minsky',       year: 2022, confidence: 0.6699999999999999,    score: 0.08558605472169789    },
@@ -354,6 +353,7 @@ const results = [
     { userid: 53, userName: 'Monse',                year: 2022, confidence: 0.33999999999999986,   score: 0.0460740593730734     },
     { userid: 54, userName: 'Eli Cohen',            year: 2022, confidence: -0.009999999999999787, score: -0.096131271890746     },
     // 2023 results
+    { userid: 1, userName: 'Averagey McAverageFace',year: 2023, confidence: 9.120000000000001,score: 0.19017101676398723},
     { userid: 10, userName: 'Yair Minsky',          year: 2023, confidence: -0.08302678682,         score: 0.211                  },
     { userid: 12, userName: 'Dan Cohen',            year: 2023, confidence: 0.1114043052,           score: 0.013                  },
     { userid: 13, userName: 'Martha Escobar',       year: 2023, confidence: -0.06861899741,         score: 0.156                  },
@@ -385,6 +385,7 @@ const results = [
     { userid: 56, userName: 'Mara Kailin',          year: 2023, confidence: -0.02071601617,         score: 0.140                  },
     { userid: 57, userName: 'Eyal Schachner',       year: 2023, confidence: 0.3360659147,           score: -0.160                 },
     // 2024 results
+    { userid: 1,  userName: 'Averagey McAverageFace',year: 2024, confidence: 1.2799999999999994,    score: 0.07059824588233979    },
     { userid: 6,  userName: 'Romana Primus',        year: 2024, confidence: 0.33999999999999986,    score: 0.02094700064318897    },
     { userid: 10, userName: 'Yair Minsky',          year: 2024, confidence: 0.9299999999999997,     score: 0.06462902713780123    },
     { userid: 13, userName: 'Martha Escobar',       year: 2024, confidence: -0.14000000000000057,   score: -0.2715212707105606    },
@@ -427,6 +428,7 @@ const results = [
     { userid: 68, userName: 'Katrina',              year: 2024, confidence: 0.08000000000000007,    score: -0.11237398826284899   },
     { userid: 69, userName: 'Elizabeth Frieden',    year: 2024, confidence: 0.870000000000001,      score: 0.1096488691783285     },
     // 2025 results
+    { userid: 1,  userName: 'Averagey McAverageFace ',  year: 2025, confidence: 0.990000000000002,     score: 0.19893904644212654    },
     { userid: 2,  userName: 'Nava Minsky-Primus',  year: 2025, confidence: 1.5299999999999994,     score: 0.19222587883813538    },
     { userid: 3,  userName: 'Sema Stein',           year: 2025, confidence: -0.019999999999999574,  score: -Infinity              },
     { userid: 6,  userName: 'Romana Primus',        year: 2025, confidence: 0.02999999999999936,    score: -0.18678784996161282   },
@@ -517,9 +519,6 @@ const answers = [
     { userid: 5,  questionid: 26, probability: 70  }, // US GDP growth (was q28)
 
     // userid 6 — Romana Primus
-    { userid: 6,  questionid: 15, probability: 100 }, // Harvard beats Yale (was q16)
-    { userid: 6,  questionid: 21, probability: 100 }, // Boeing 737 Max (was q23)
-    { userid: 6,  questionid: 11, probability: 100 }, // Boris Johnson (invalid)
     { userid: 6,  questionid: 3,  probability: 100 }, // Trump pardons
     { userid: 6,  questionid: 4,  probability: 80  }, // Ossoff or Warnock
     { userid: 6,  questionid: 1,  probability: 100 }, // Biden sworn in

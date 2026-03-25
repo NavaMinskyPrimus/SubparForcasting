@@ -32,7 +32,7 @@ describe('Results API Integration Tests', () => {
                 .expect(200);
             expect(Array.isArray(response.body)).toBe(true);
             expect(response.body.length).toBe(2);
-            const celine = response.body.find((r: any) => r.userid === 1);
+            const celine = response.body.find((r: any) => r.userid === 4);
             const ima = response.body.find((r: any) => r.userid === 2);
             expect(celine['user name']).toBe('Celine');
             expect(celine.score).toBeCloseTo(-1.6094379124341003, 5);
@@ -51,7 +51,7 @@ describe('Results API Integration Tests', () => {
             expect(Array.isArray(response.body)).toBe(true);
             expect(response.body.length).toBe(2);
             const userids = response.body.map((r: any) => r.userid);
-            expect(userids).toContain(1);
+            expect(userids).toContain(4);
             expect(userids).toContain(2);
             response.body.forEach((r: any) => {
                 expect(r.score).toBeNull();
@@ -108,7 +108,7 @@ describe('Results API Integration Tests', () => {
             // both Celine (p=10, true) and Ima (p=90, true) have 2010 answers as well as averagy (p=50)
             expect(response.body.length).toBe(3);
             console.log(response.body)
-            const celine = response.body.find((r: any) => r.userid === 1);
+            const celine = response.body.find((r: any) => r.userid === 4);
             expect(celine).toBeDefined();
             expect(celine['user name']).toBe('Celine');
             expect(celine.year).toBe(2010);
@@ -124,20 +124,20 @@ describe('Results API Integration Tests', () => {
             expect(ima.confidence).toBeCloseTo(9.99, 2);
         });
 
-        it('GET should reflect 2010 scores with addition of averagy', async () => {
+        it('GET should reflect 2010 scores with addition of averagey', async () => {
             const response = await request(app)
                 .get('/api/results')
                 .set('x-test-sub', 'sub1')
                 .query({ year: 2010 })
                 .expect(200);
             expect(response.body.length).toBe(3);
-            const celine = response.body.find((r: any) => r.userid === 1);
+            const celine = response.body.find((r: any) => r.userid === 4);
             expect(celine).toBeDefined();
             expect(celine.score).toBeCloseTo(-1.6094379124341003, 5);
             const ima = response.body.find((r: any) => r.userid === 2);
             expect(ima).toBeDefined();
             expect(ima.score).toBeCloseTo(0.5877866649021191, 5);
-            const averagy =  response.body.find((r: any) => r.userid === 4)
+            const averagy =  response.body.find((r: any) => r.userid === 1)
             expect(averagy.score).toBeCloseTo(0, 5);
         });
     });
@@ -168,7 +168,7 @@ describe('Results API Integration Tests', () => {
                 .expect(200);
             expect(Array.isArray(response.body)).toBe(true);
             expect(response.body.length).toBe(2);
-            const celine = response.body.find((r: any) => r.userid === 1);
+            const celine = response.body.find((r: any) => r.userid === 4);
             expect(celine).toBeDefined();
             expect(celine['user name']).toBe('Celine');
             expect(celine.year).toBe(2011);
@@ -176,6 +176,13 @@ describe('Results API Integration Tests', () => {
             expect(typeof celine.confidence).toBe('number');
             expect(isFinite(celine.confidence)).toBe(true);
             expect(celine.confidence).toBe(0);
+            const averagy = response.body.find((r: any) => r.userid === 1);
+            expect(averagy).toBeDefined();
+            expect(averagy.year).toBe(2011);
+            expect(averagy.score).toBeCloseTo(-1.6144630803608504, 5);
+            expect(typeof averagy.confidence).toBe('number');
+            expect(isFinite(averagy.confidence)).toBe(true);
+            expect(averagy.confidence).toBe(0);
         });
 
         it('GET /api/results should reflect 2011 scores', async () => {
@@ -184,7 +191,7 @@ describe('Results API Integration Tests', () => {
                 .set('x-test-sub', 'sub1')
                 .query({ year: 2011 })
                 .expect(200);
-            const celine = response.body.find((r: any) => r.userid === 1);
+            const celine = response.body.find((r: any) => r.userid === 4);
             expect(celine).toBeDefined();
             expect(celine.score).toBeCloseTo(-1.6144630803608504, 5);
             const ima = response.body.find((r: any) => r.userid === 2);
@@ -200,14 +207,14 @@ describe('Results API Integration Tests', () => {
             expect(q3.body.result).toBeNull();
 
             await pool.query(
-                `UPDATE results SET confidence = null, score = null WHERE userid = 1 AND year = 2011`
+                `UPDATE results SET confidence = null, score = null WHERE userid = 4 AND year = 2011`
             );
             await pool.query(`UPDATE settings SET released_year = 2010`);
-            await pool.query(`DELETE FROM public."answers" WHERE userid = 4`);
-            await pool.query(`DELETE FROM public."results" WHERE userid = 4`);
+            await pool.query(`DELETE FROM public."answers" WHERE userid = 1`);
+            await pool.query(`DELETE FROM public."results" WHERE userid = 1`);
             const results = await request(app)
                 .get('/api/results')
-                .set('x-test-sub', 'sub1')
+                .set('x-test-sub', 'sub3')
                 .query({ year: 2011 })
                 .expect(200);
             results.body.forEach((r: any) => {

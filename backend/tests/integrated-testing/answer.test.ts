@@ -9,7 +9,7 @@ describe('Answers API Integration Tests', () => {
         it('should get all answers', async () => {
             const response = await request(app)
                 .get('/api/answers')
-                .query({userid: 1})
+                .query({userid: 4})
                 .expect(200);
             expect(response.body.length).toBe(3);
         });

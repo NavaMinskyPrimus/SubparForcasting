@@ -66,6 +66,7 @@ export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing, user
   const [adminEmailStatus, setAdminEmailStatus] =useState<SaveStatus>("idle");
   const [adminEmailError, setAdminEmailError] = useState<string | null>(null);
 
+  const [userList, setUserList] = useState<User[]>(users);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [adminSelectedFromList, setAdminSelectedFromList] = useState(false);
   const [selectedUserPermission, setSelectedUserPermission] = useState<string | null>(null);
@@ -207,7 +208,7 @@ export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing, user
   };
 
   const filteredUsers = adminEmail.trim()
-    ? users.filter(u => u.email.toLowerCase().includes(adminEmail.toLowerCase()))
+    ? userList.filter(u => u.email.toLowerCase().includes(adminEmail.toLowerCase()))
     : [];
 
   const handleAddAdmin = () => {
@@ -630,12 +631,12 @@ export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing, user
                       {computeStatus === "saving" ? "Computing..." : "Compute and Release Results"}
                     </Button>
                   )}
-                  {releasedYear === nextGame - 1 && (
+                  {releasedYear >= nextGame - 1 && (
                     <Button
                       onClick={() => {
                         startTransition(async () => {
-                          const res = await setReleasedYearAction(releasedYear - 1);
-                          if (res.ok) setReleasedYear(releasedYear - 1);
+                          const res = await setReleasedYearAction(nextGame - 2);
+                          if (res.ok) setReleasedYear(nextGame - 2);
                         });
                       }}
                       className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white"

@@ -8,7 +8,7 @@ describe('Answers API Integration Tests', () => {
         it('should log in existing user', async () => {
             const response = await request(app)
                 .put('/api/login')
-                .send({sub: "sub1"})
+                .send({sub: "sub4"})
                 .expect(200);
             expect(response.body.name).toBe("Celine");
         });

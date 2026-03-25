@@ -55,18 +55,18 @@ describe('Database CRUD tests for user queries', () => {
     describe('Averagy', async () =>{
         it('should add averagy for 2011', async () =>{
             await addAveragy(2011);
-            const averagy_answers = await getAnswersByUID(4);
+            const averagy_answers = await getAnswersByUID(1);
             expect(Array.isArray(averagy_answers)).toBe(true);
             console.log(averagy_answers)
             expect(averagy_answers.length).toBe(2);
             console.log(averagy_answers);
         })
         it('should remove averagy answers', async () =>{
-            const averagy_answer = await getAnswersByUID(4);
+            const averagy_answer = await getAnswersByUID(1);
             for(const ans of averagy_answer){
                 await deleteAnswer(ans.userid, ans.questionid)
             }
-            const averagy_answer_empty = await getAnswersByUID(4);
+            const averagy_answer_empty = await getAnswersByUID(1);
             expect(Array.isArray(averagy_answer_empty)).toBe(true);
             expect(averagy_answer_empty.length).toBe(0);        
         })

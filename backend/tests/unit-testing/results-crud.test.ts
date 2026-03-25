@@ -13,7 +13,7 @@ describe('Database CRUD tests for results queries', () => {
             expect(Array.isArray(results)).toBe(true);
             expect(results.length).toBe(2);
             // results are ORDER BY score DESC, so Ima (0.255) comes before Celine (-0.699)
-            const celine = results.find((r: any) => r.userid === 1) as any;
+            const celine = results.find((r: any) => r.userid === 4) as any;
             const ima = results.find((r: any) => r.userid === 2) as any;
             expect(celine).toBeDefined();
             expect(celine['user name']).toBe('Celine');
@@ -32,7 +32,7 @@ describe('Database CRUD tests for results queries', () => {
             expect(Array.isArray(results)).toBe(true);
             expect(results.length).toBe(2);
             const userids = results.map((r: any) => r.userid);
-            expect(userids).toContain(1);
+            expect(userids).toContain(4);
             expect(userids).toContain(2);
             results.forEach((r: any) => {
                 expect(r.score).toBeNull();
@@ -48,8 +48,8 @@ describe('Database CRUD tests for results queries', () => {
 
     describe('upsertResult', () => {
         it('should insert a new result', async () => {
-            const result = await upsertResult(1, 'Celine', 2009, 1.5, -0.5);
-            expect(result.userid).toBe(1);
+            const result = await upsertResult(4, 'Celine', 2009, 1.5, -0.5);
+            expect(result.userid).toBe(4);
             expect(result['user name']).toBe('Celine');
             expect(result.year).toBe(2009);
             expect(result.confidence).toBeCloseTo(1.5, 5);
@@ -57,14 +57,14 @@ describe('Database CRUD tests for results queries', () => {
         });
 
         it('should update an existing result on conflict', async () => {
-            const updated = await upsertResult(1, 'Celine', 2009, 2.0, -0.25);
-            expect(updated.userid).toBe(1);
+            const updated = await upsertResult(4, 'Celine', 2009, 2.0, -0.25);
+            expect(updated.userid).toBe(4);
             expect(updated.year).toBe(2009);
             expect(updated.confidence).toBeCloseTo(2.0, 5);
             expect(updated.score).toBeCloseTo(-0.25, 5);
             // confirm only one row exists for this userid/year
             const results = await getResultsByYear(2009);
-            expect(results.filter((r: any) => r.userid === 1).length).toBe(1);
+            expect(results.filter((r: any) => r.userid === 4).length).toBe(1);
         });
 
         it('should support null confidence and score', async () => {
