@@ -1,10 +1,29 @@
 "use client";
 
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { getResults } from '@/lib/resultsActions';
 import type { ResultsModuleProps } from './index';
 
-export function ConfidenceModule({ year, confidenceData }: ResultsModuleProps) {
+export function ConfidenceModule({ year }: ResultsModuleProps) {
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    getResults(Number(year)).then(res => {
+      if (!res.ok) {
+        setError(res.error ?? 'Failed to load results');
+      } else {
+        setData(res.data);
+      }
+      setLoading(false);
+    });
+  }, [year]);
+
   return (
     <Card>
       <CardHeader>
@@ -16,8 +35,10 @@ export function ConfidenceModule({ year, confidenceData }: ResultsModuleProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {!confidenceData ? (
-          <p className="text-sm text-slate-500">No confidence data available.</p>
+        {loading ? (
+          <p className="text-sm text-slate-500">Loading...</p>
+        ) : error ? (
+          <p className="text-sm text-red-600">{error}</p>
         ) : (
           <Table>
             <TableHeader>
@@ -27,7 +48,7 @@ export function ConfidenceModule({ year, confidenceData }: ResultsModuleProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {confidenceData.map((entry, i) => (
+              {data.map((entry, i) => (
                 <TableRow key={i}>
                   <TableCell>{entry['user name']}</TableCell>
                   <TableCell className="font-medium">
