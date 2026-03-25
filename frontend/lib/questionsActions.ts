@@ -23,7 +23,7 @@ export async function addQuestion(text: string):Promise<ActionResult<any>>{
 }
 
 export async function getQuestionsWithAnswers(year: number): Promise<ActionResult<any>>{
-  const url = `${process.env.BACKEND_URL}/api/questions//with-answers?year=${encodeURIComponent(year)}`;
+  const url = `${process.env.BACKEND_URL}/api/questions//with-user-answers?year=${encodeURIComponent(year)}`;
   return authedFetch(url, {method: "GET"})
 }
 

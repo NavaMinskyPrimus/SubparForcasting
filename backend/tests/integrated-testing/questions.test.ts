@@ -24,11 +24,18 @@ describe('Questions API Integration Tests', () => {
         })
         it('should get questions with answers', async () =>{
             const response = await request(app)
-                .get('/api/questions/with-answers')
+                .get('/api/questions/with-user-answers')
                 .set("x-test-sub", "sub2")
                 .query({year: 2010})
                 .expect(200);
             expect(response.body[0].probability).toBe(90)
+        })
+        it('should get questions with all answers', async () =>{
+            const response = await request(app)
+                .get('/api/questions/with-all-answers')
+                .query({year: 2010})
+                .expect(200);
+            expect(response.body[0].answers.length).toBe(2)
         })
     })
     describe('post, put, delete tests', () => {

@@ -75,8 +75,8 @@ export async function handlePostAnswer(req: Request, res: Response) {
         const answers = await postAnswer(uid, qid, prob);
         res.status(200).json(answers);
     }catch(err){
-        console.error("Failed to post answers", err);
-        res.status(500).json({ err: "Failed to post answers" });
+        console.error("Failed to post answer", err);
+        res.status(500).json({ err: "Failed to post answer" });
     }
 }
 
@@ -128,73 +128,78 @@ export async function handleDeleteAnswer(req: Request, res: Response){
 }
 
 export async function handlePostAnswers(req: Request, res: Response){
-    if (!req.body ){
-        console.error("handlePostAnswers: body is undefined")
-        return res.status(400).json({err: "body is undefined"});   
-    }
-    if (!req.auth?.sub) {
-        console.error("handlePostAnswers: Authentication required")
-        return res.status(401).json({ err: 'Authentication required' });
-    }
-    const sub = req.auth.sub;
-    const currentUser = await getUserBySub(sub);
-    if(!currentUser){
-        console.error("handlePostAnswers: current user not found")
-        return res.status(404).json({ err: 'current user not found' });
-    }
-    const uid = currentUser.userid
-    const answers = req.body.answers
-    if(answers == null || answers == undefined){
-        console.error("handlePostAnswers: answers is requiered")
-        return res.status(400).json({err: 'answers is requiered'})
-    }
-    if(!Array.isArray(answers)){
-        console.error("handlePostAnswers: answers must be an array")
-        return res.status(400).json({err: 'answers must be an array'})
-    }
-    if(answers.length == 0){
-        return res.status(200).json([]);
-    }
-    let ans_list = []
-    console.log(answers)
-    for (const ans of answers) {
-        console.log(ans)
-        const qid = ans.questionid
-        if(qid == null || qid == undefined){
-            console.error("handlePostAnswers: all answers must have qid")
-            return res.status(400).json({err: 'all answers must have qid'})
+    try{
+        if (!req.body ){
+            console.error("handlePostAnswers: body is undefined")
+            return res.status(400).json({err: "body is undefined"});   
         }
-        if(typeof(qid) != "number"){
-            console.error("handlePostAnswers: qids must all be numbers")
-            return res.status(400).json({err: 'qids must all be numbers'})
+        if (!req.auth?.sub) {
+            console.error("handlePostAnswers: Authentication required")
+            return res.status(401).json({ err: 'Authentication required' });
         }
-        const question = await getQuestion(qid);
-        if(question == null){
-            console.error("handlePostAnswers: No question associated with one of the given qids")
-            return res.status(404).json({
-                err: "No question associated with one of the given qids",
-            });
+        const sub = req.auth.sub;
+        const currentUser = await getUserBySub(sub);
+        if(!currentUser){
+            console.error("handlePostAnswers: current user not found")
+            return res.status(404).json({ err: 'current user not found' });
         }
-        const prob = ans.probability
-        if(prob == null || qid == undefined){
-            console.error("handlePostAnswers: all answers must have a probability")
-            return res.status(400).json({err: 'all answers must have a probability'})
+        const uid = currentUser.userid
+        const answers = req.body.answers
+        if(answers == null || answers == undefined){
+            console.error("handlePostAnswers: answers is requiered")
+            return res.status(400).json({err: 'answers is requiered'})
         }
-        if(typeof(prob) != "number"){
-            console.error("handlePostAnswers: probabilities must be numbers")
-            return res.status(400).json({err: 'probabilities must be numbers'})
+        if(!Array.isArray(answers)){
+            console.error("handlePostAnswers: answers must be an array")
+            return res.status(400).json({err: 'answers must be an array'})
         }
-        if(prob < 0 || prob > 100){
+        if(answers.length == 0){
+            return res.status(200).json([]);
+        }
+        let ans_list = []
+        console.log(answers)
+        for (const ans of answers) {
+            console.log(ans)
+            const qid = ans.questionid
+            if(qid == null || qid == undefined){
+                console.error("handlePostAnswers: all answers must have qid")
+                return res.status(400).json({err: 'all answers must have qid'})
+            }
+            if(typeof(qid) != "number"){
+                console.error("handlePostAnswers: qids must all be numbers")
+                return res.status(400).json({err: 'qids must all be numbers'})
+            }
+            const question = await getQuestion(qid);
+            if(question == null){
+                console.error("handlePostAnswers: No question associated with one of the given qids")
+                return res.status(404).json({
+                    err: "No question associated with one of the given qids",
+                });
+            }
+            const prob = ans.probability
+            if(prob == null || qid == undefined){
+                console.error("handlePostAnswers: all answers must have a probability")
+                return res.status(400).json({err: 'all answers must have a probability'})
+            }
+            if(typeof(prob) != "number"){
+                console.error("handlePostAnswers: probabilities must be numbers")
+                return res.status(400).json({err: 'probabilities must be numbers'})
+            }
+            if(prob < 0 || prob > 100){
+                console.error("handlePostAnswers: probability must be between 0 and 100")
+                return res.status(400).json({err: 'probability must be between 0 and 100'})
+            }
+            ans_list.push({ userid: uid, questionid: qid, probability: prob })
+        }
+        const posted = await postAnswers(ans_list)
+        res.status(200).json(posted);
+        if(posted == null){
             console.error("handlePostAnswers: probability must be between 0 and 100")
             return res.status(400).json({err: 'probability must be between 0 and 100'})
         }
-        ans_list.push({ userid: uid, questionid: qid, probability: prob })
-    }
-    const posted = await postAnswers(ans_list)
-    res.status(200).json(posted);
-    if(posted == null){
-        console.error("handlePostAnswers: probability must be between 0 and 100")
-        return res.status(400).json({err: 'probability must be between 0 and 100'})
+    }catch(err){
+        console.error("handlePostAnswers: Failed to post answers", err);
+        res.status(500).json({ err: "Failed to post answers" });
     }
 }
 

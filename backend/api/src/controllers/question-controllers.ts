@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { changeValidation, deleteQuestionWithAssociatedAnswers, getQuestion, getQuestionsByYear, postQuestion, putQuestion } from "../../../database/question-queries";
 import { getSettings } from "../../../database/settings-queries"
 import { getUserBySub } from "../../../database/user-queries";
-import { checkAnswer } from "../../../database/answer-queries";
+import { checkAnswer, getAnswersByQID } from "../../../database/answer-queries";
 export async function handleGetQuestion(req: Request, res: Response) {
     try {
         const rawQid = req.query.questionid;
@@ -208,7 +208,7 @@ export async function handlePutQuestion(req: Request, res: Response){
     }
 }
 
-export async function handleGetQuestionsWithAnswers(req: Request, res: Response) {
+export async function handleGetQuestionsWithUserAnswers(req: Request, res: Response) { // this gets the answers for one user
     try {
         const rawYear = req.query.year;
         if (rawYear === undefined) {
@@ -288,5 +288,46 @@ export async function handleValidation(req: Request, res: Response) {
     }catch(err){
         console.error("handleValidation: Failed to update validation", err);
         res.status(500).json({ err: "Failed to update validation" });
+    }
+}
+
+
+export async function handleGetQuestionsWithAllAnswers(req: Request, res: Response) { // this gets the answers for one user
+    try {
+        const rawYear = req.query.year;
+        if (rawYear === undefined) {
+            console.error("handleGetQuestionsWithAllAnswers: year is requiered")
+            return res.status(400).json({err: "year is requiered"});
+        }
+        const year = Number(rawYear);
+        if (!Number.isInteger(year) || year <= 0) {
+            console.error("handleGetQuestionsWithAllAnswers: year must be a positive integer")
+            return res.status(400).json({ err: "year must be a positive integer" });
+        }
+        const questions = await getQuestionsByYear(year);
+        if (!req.auth?.sub) {
+            console.error("handleGetQuestionsWithAllAnswers: authentication required")
+            return res.status(401).json({ err: 'Authentication required' });
+        }
+        const sub = req.auth.sub;
+        const currentUser = await getUserBySub(sub);
+        if(!currentUser){
+            console.error("handleGetQuestionsWithAllAnswers: current user not found in database")
+            return res.status(404).json({ err: 'current user not found' });
+        }
+        const result = []
+        for(const q of questions){
+            const qid = q.questionid
+            const answers_raw = await getAnswersByQID(qid)
+            const answers = []
+            for(const ans of answers_raw){
+                answers.push({userid: ans.userid, probability: ans.probability})
+            }
+            result.push({...q,  answers: answers})
+        }
+        res.status(200).json(result);
+    } catch (err) {
+        console.error("handleGetQuestionsWithAllAnswers: Failed to get questions", err);
+        res.status(500).json({ err: "Failed to get questions" });
     }
 }
