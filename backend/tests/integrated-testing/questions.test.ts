@@ -32,10 +32,13 @@ describe('Questions API Integration Tests', () => {
         })
         it('should get questions with all answers', async () =>{
             const response = await request(app)
-                .get('/api/questions/with-all-answers')
+                .get('/api/questions/display-info')
                 .query({year: 2010})
                 .expect(200);
-            expect(response.body[0].answers.length).toBe(2)
+            expect(response.body.questions_with_answers[0].answers.length).toBe(2)
+            console.log(response.body)
+            console.log(response.body.questions_with_answers[0].answers)
+            console.log(response.body.players)
         })
     })
     describe('post, put, delete tests', () => {

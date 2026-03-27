@@ -22,11 +22,15 @@ export async function addQuestion(text: string):Promise<ActionResult<any>>{
   return authedFetch(url, {method: "POST", body: JSON.stringify({text: text})})
 }
 
-export async function getQuestionsWithAnswers(year: number): Promise<ActionResult<any>>{
+export async function getQuestionsWithUserAnswers(year: number): Promise<ActionResult<any>>{
   const url = `${process.env.BACKEND_URL}/api/questions//with-user-answers?year=${encodeURIComponent(year)}`;
   return authedFetch(url, {method: "GET"})
 }
 
+export async function getDisplayInformation(year: number): Promise<ActionResult<any>>{
+  const url = `${process.env.BACKEND_URL}/api/questions//display-info?year=${encodeURIComponent(year)}`;
+  return authedFetch(url, {method: "GET"})
+}
 
 export async function invalidateQuestion(qid:number): Promise<ActionResult<any>> {
   const url = `${process.env.BACKEND_URL}/api/questions/isvalid`;

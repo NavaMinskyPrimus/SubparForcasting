@@ -7,6 +7,11 @@ export async function getUsers(): Promise<ActionResult<any>> {
   return authedFetch(url, {method: "GET"})
 }
 
+export async function getMe(): Promise<ActionResult<any>> {
+  const url = `${process.env.BACKEND_URL}/api/users/me`;
+  return authedFetch(url, {method: "GET"})
+}
+
 export async function makeAdmin(email: string): Promise<ActionResult<any>> {
   const url = `${process.env.BACKEND_URL}/api/users/makeadmin`;
   return authedFetch(url, {

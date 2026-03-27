@@ -19,7 +19,7 @@ interface Answer {
   inputValue?: string;
 }
 
-export function QuestionsPage({rows, isAdmin, origional_answers}: {rows: any[], isAdmin: boolean, origional_answers: any[]}) {
+export function QuestionsPage({rows, isAdmin}: {rows: any[], isAdmin: boolean}) {
   const [answers, setAnswers] = useState<Answer[]>(
     rows.map(q => ({ questionId: q.questionid, probability: q.probability, inputValue: String(q.probability) }))
   );

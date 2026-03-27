@@ -3,3 +3,4 @@
 *.env
 frontend/.next
 backend/tests/test-results.txt 
+backend/Subpar\ key\ pair.pem
