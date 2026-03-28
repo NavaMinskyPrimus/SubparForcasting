@@ -23,7 +23,11 @@ export function ResultsPage({ releasedYear, isAdmin }: { releasedYear: number , 
   );
 
   const [selectedYear, setSelectedYear] = useState(years[0]);
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(
+      years.flatMap(y => (YEAR_MODULES[y] ?? ['leaderboard']).map(m => [`${y}-${m}`, true]))
+    )
+  );
 
   const modules = YEAR_MODULES[selectedYear] ?? ['leaderboard'];
 
