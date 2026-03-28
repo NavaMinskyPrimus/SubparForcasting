@@ -1,5 +1,5 @@
 import { deleteUserWithAssociatedAnswers, getUserByEmail, getUserByID, getUserBySub, getUsers, postUser} from '../../../database/user-queries';
-import {deleteAnswersByUID} from '../../../database/answer-queries';
+import {postAnswers} from '../../../database/answer-queries';
 import type { Request, Response } from "express";
 
 export async function handleGetUsers(req: Request, res: Response) {
@@ -209,5 +209,48 @@ export async function handleMakeUser(req: Request, res: Response){
     } catch (err) {
         console.error("handleMakeUser: failed to make user an admin", err);
         res.status(500).json({ err: "Failed to make user an admin" });
+    }
+}
+
+export async function handlePostSyntheticPlayer(req: Request, res: Response) {
+    try {
+        if (!req.auth?.sub) {
+            return res.status(401).json({ err: 'Authentication required' });
+        }
+        const sub = req.auth.sub;
+        const currentUser = await getUserBySub(sub);
+        if (!currentUser) {
+            return res.status(404).json({ err: 'current user not found' });
+        }
+        if (currentUser.permission !== 'admin') {
+            return res.status(403).json({ err: 'only admins can add synthetic players' });
+        }
+        const { name, answers } = req.body;
+        if (typeof name !== 'string' || name.trim().length === 0) {
+            return res.status(400).json({ err: 'name is required' });
+        }
+        if (!Array.isArray(answers)) {
+            return res.status(400).json({ err: 'answers must be an array' });
+        }
+        for (const a of answers) {
+            if (typeof a.questionid !== 'number' || typeof a.probability !== 'number') {
+                return res.status(400).json({ err: 'each answer needs questionid and probability' });
+            }
+            if (a.probability < 0 || a.probability > 100) {
+                return res.status(400).json({ err: 'probability must be between 0 and 100' });
+            }
+        }
+        const email = `synthetic_${Date.now()}@synthetic.local`;
+        const newUser = await postUser(name.trim(), email, 'user', null);
+        const answersWithUser = answers.map((a: { questionid: number; probability: number }) => ({
+            userid: newUser.userid,
+            questionid: a.questionid,
+            probability: a.probability,
+        }));
+        await postAnswers(answersWithUser);
+        res.status(200).json(newUser);
+    } catch (err) {
+        console.error('handlePostSyntheticPlayer: failed', err);
+        res.status(500).json({ err: 'Failed to add synthetic player' });
     }
 }

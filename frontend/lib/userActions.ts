@@ -29,3 +29,15 @@ export async function makeUser(email: string): Promise<ActionResult<any>> {
     body: JSON.stringify({ email }),
   });
 }
+
+export async function addSyntheticPlayer(
+  name: string,
+  answers: { questionid: number; probability: number }[]
+): Promise<ActionResult<any>> {
+  const url = `${process.env.BACKEND_URL}/api/users/synthetic`;
+  return authedFetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, answers }),
+  });
+}
