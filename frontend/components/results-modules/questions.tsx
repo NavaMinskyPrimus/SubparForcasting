@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getDisplayInformation } from '@/lib/questionsActions';
@@ -28,15 +28,6 @@ function dotStyle(color: DotColor): React.CSSProperties {
   return { backgroundColor: '#94a3b8', width: 8, height: 8, zIndex: 1 };
 }
 
-function AnswerDot({ answer, color }: { answer: Answer; color: DotColor }) {
-  return (
-    <div
-      className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 rounded-full cursor-default"
-      style={{ left: `${answer.probability}%`, ...dotStyle(color) }}
-      title={`${answer.name}: ${answer.probability}%`}
-    />
-  );
-}
 
 function ScatterPlot({ answers, myUserid, selectedUserid }: { answers: Answer[]; myUserid: number | null; selectedUserid: number | null }) {
   if (answers.length === 0) return <p className="text-xs text-slate-400">No answers</p>;
@@ -49,25 +40,53 @@ function ScatterPlot({ answers, myUserid, selectedUserid }: { answers: Answer[];
     return 'default';
   };
 
-  // render highlighted dots on top
-  const sorted = [...answers].sort((a, b) => {
-    const priority = (a: Answer) => (a.userid === myUserid || a.userid === selectedUserid ? 1 : 0);
-    return priority(a) - priority(b);
-  });
+  // Group answers by probability, highlighted dots go on top within each stack
+  const groups = new Map<number, Answer[]>();
+  for (const a of answers) {
+    const key = a.probability;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(a);
+  }
+  for (const group of groups.values()) {
+    group.sort((a, b) => {
+      const priority = (x: Answer) => (x.userid === myUserid || x.userid === selectedUserid ? 1 : 0);
+      return priority(a) - priority(b);
+    });
+  }
+
+  const DOT_SIZE = 10;
+  const GAP = 2;
+  const LABEL_HEIGHT = 20;
+
+  const maxStack = Math.max(...Array.from(groups.values()).map(g => g.length));
+  const stackHeight = maxStack * (DOT_SIZE + GAP);
+  const BASELINE_Y = stackHeight + 4; // baseline sits below all upward stacks
+  const totalHeight = BASELINE_Y + LABEL_HEIGHT;
 
   return (
-    <div className="relative w-full" style={{ height: 28 }}>
-      <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-0.5 bg-slate-200 rounded" />
-      <span className="absolute left-0 top-full text-xs text-slate-400 translate-y-0.5">0</span>
-      <span className="absolute right-0 top-full text-xs text-slate-400 translate-y-0.5">100</span>
+    <div className="relative w-full" style={{ height: totalHeight }}>
+      <div className="absolute left-0 right-0 h-0.5 bg-slate-200 rounded" style={{ top: BASELINE_Y }} />
+      <span className="absolute left-0 text-xs text-slate-400" style={{ top: BASELINE_Y + 6 }}>0</span>
+      <span className="absolute right-0 text-xs text-slate-400" style={{ top: BASELINE_Y + 6 }}>100</span>
       <div
-        className="absolute top-0 bottom-0 w-0.5 bg-black"
-        style={{ left: `${avg}%` }}
+        className="absolute w-0.5 bg-black"
+        style={{ left: `${avg}%`, top: BASELINE_Y - 8, height: 16 }}
         title={`Avg: ${avg.toFixed(1)}%`}
       />
-      {sorted.map((a) => (
-        <AnswerDot key={a.userid} answer={a} color={getColor(a)} />
-      ))}
+      {Array.from(groups.entries()).map(([prob, group]) =>
+        group.map((a, stackIndex) => {
+          const dotSize = dotStyle(getColor(a)).width as number;
+          const y = BASELINE_Y - dotSize / 2 - stackIndex * (DOT_SIZE + GAP);
+          return (
+            <div
+              key={a.userid}
+              className="absolute -translate-x-1/2 rounded-full cursor-default"
+              style={{ left: `${prob}%`, top: y, ...dotStyle(getColor(a)) }}
+              title={`${a.name}: ${a.probability}%`}
+            />
+          );
+        })
+      )}
     </div>
   );
 }
