@@ -215,7 +215,10 @@ export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing, user
   };
 
   const filteredUsers = adminEmail.trim()
-    ? userList.filter(u => u.email.toLowerCase().includes(adminEmail.toLowerCase()))
+    ? userList.filter(u => {
+        const q = adminEmail.toLowerCase();
+        return u.email.toLowerCase().includes(q) || (u.name ?? '').toLowerCase().includes(q);
+      })
     : [];
 
   const handleAddAdmin = () => {
