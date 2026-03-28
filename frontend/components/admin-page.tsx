@@ -231,6 +231,7 @@ export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing, user
           setAdminEmailError(res.error ?? "Unknown error");
           return;
         }
+        setUserList(prev => prev.map(u => u.email === adminEmail ? { ...u, permission: "admin" } : u));
         setAdminEmailStatus("success");
         setAdminEmail("");
         setAdminSelectedFromList(false);
@@ -250,6 +251,7 @@ export function AdminPage({ rowsnext, rowslast, isAdmin, nextGame, playing, user
           setAdminEmailError(res.error ?? "Unknown error");
           return;
         }
+        setUserList(prev => prev.map(u => u.email === adminEmail ? { ...u, permission: "user" } : u));
         setAdminEmailStatus("success");
         setAdminEmail("");
         setAdminSelectedFromList(false);
