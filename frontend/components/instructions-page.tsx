@@ -232,15 +232,17 @@ export function InstructionsPage({ isAdmin, open, close}: { isAdmin: boolean, op
           </div>
 
           {/* CTA */}
-          <div className="flex justify-center pt-4">
-            <Button
-              size="lg"
-              onClick={() => router.push("/questions")}
-              className="text-lg px-12 py-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-            >
-              Ready to Start Forecasting →
-            </Button>
-          </div>
+          {isOpen && (
+            <div className="flex justify-center pt-4">
+              <Button
+                size="lg"
+                onClick={() => router.push("/questions")}
+                className="text-lg px-12 py-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
+                Ready to Start Forecasting →
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
