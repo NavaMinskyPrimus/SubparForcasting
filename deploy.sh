@@ -3,7 +3,7 @@ set -e
 
 KEY="$(dirname "$0")/backend/Subpar key pair.pem"
 EC2_USER="ubuntu"
-EC2_HOST="3.236.115.107"
+EC2_HOST="34.192.229.238"
 
 echo "==> Merging main into deploy..."
 git checkout deploy
