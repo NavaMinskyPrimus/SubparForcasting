@@ -1,8 +1,9 @@
 import { ResultsPage } from "@/components/results-page";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { getReleasedYear } from "@/lib/settingsActions";
+import { getReleasedYear, getDates } from "@/lib/settingsActions";
 import { isAdmin } from "@/lib/authInteractions";
+import { CURRENT_DATE } from "@/lib/constants";
 
 export default async function Page() {
   const session = await auth();
@@ -10,9 +11,15 @@ export default async function Page() {
   if (!session?.user) {
     redirect("/");
   }
-  const res = await getReleasedYear();
+  const [res, datesRes] = await Promise.all([getReleasedYear(), getDates()]);
   if (!res.ok) {
     throw new Error(res.error);
   }
-  return <ResultsPage releasedYear={res.data.released_year} isAdmin={isa} />;
+  if (!datesRes.ok) {
+    throw new Error(datesRes.error);
+  }
+  const open = new Date(datesRes.data.open);
+  const close = new Date(datesRes.data.close);
+  const isOpen = open <= CURRENT_DATE && CURRENT_DATE < close;
+  return <ResultsPage releasedYear={res.data.released_year} isAdmin={isa} playing={isOpen} />;
 }
