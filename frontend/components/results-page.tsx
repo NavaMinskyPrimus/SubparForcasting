@@ -16,7 +16,7 @@ const MODULE_LABELS: Record<ResultsModuleName, string> = {
   questions: 'Questions',
 };
 
-export function ResultsPage({ releasedYear, isAdmin }: { releasedYear: number , isAdmin: boolean}) {
+export function ResultsPage({ releasedYear, isAdmin, playing }: { releasedYear: number , isAdmin: boolean, playing: boolean}) {
   const years = Array.from(
     { length: releasedYear - FIRST_GAME + 1 },
     (_, i) => String(releasedYear - i)
@@ -36,7 +36,7 @@ export function ResultsPage({ releasedYear, isAdmin }: { releasedYear: number , 
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-      <Header isAdmin={isAdmin} playing={false} />
+      <Header isAdmin={isAdmin} playing={playing} />
       <div className="p-4 md:p-8">
         <div className="max-w-6xl mx-auto space-y-8">
           <div className="text-center space-y-4">
